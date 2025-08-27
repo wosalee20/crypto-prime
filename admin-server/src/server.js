@@ -36,7 +36,9 @@ const corsConfig = {
   origin: (origin, cb) => {
     // Allow no-origin (curl, server-side) and whitelisted origins
     if (!origin) return cb(null, true);
-    const whitelist = (process.env.ALLOWED_ORIGINS || "http://localhost:5173")
+    const whitelist = (
+      process.env.ALLOWED_ORIGINS || "http://cyptoprime.online"
+    )
       .split(",")
       .map((s) => s.trim());
     if (whitelist.includes(origin)) return cb(null, true);
