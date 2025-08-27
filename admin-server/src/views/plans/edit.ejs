@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>
+      <%= (typeof title !== 'undefined' && title) ? title : 'Edit Plan' %> —
+      Admin
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/static/admin.css" rel="stylesheet" />
+
+    <style>
+      /* ================= White / Black / Brown-Orange Theme ================= */
+      :root {
+        --bg: #ffffff;
+        --ink: #0b0b0b;
+        --muted: #6b6b6b;
+        --soft: #f7f7f7;
+        --border: #e8e8e8;
+        --brand-50: #fff4e8;
+        --brand-200: #ffd4a6;
+        --brand-400: #e9953e;
+        --brand-500: #d67a19;
+        --brand-600: #b26014;
+        --brand-900: #4b2808;
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--soft);
+        color: var(--ink);
+        font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+      }
+      html,
+      body {
+        overflow: auto;
+      } /* always allow scroll if content grows */
+
+      /* Centered + scalable wrapper (consistent with other pages you liked) */
+      .cp-desktop-wrap {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background: var(--soft);
+      }
+      .cp-desktop {
+        display: block;
+        width: max-content;
+        min-width: 100%;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 12px 0;
+      }
+      .cp-scale {
+        transform-origin: top left;
+        transform: scale(0.94);
+      }
+      @media (max-width: 1200px) {
+        .cp-scale {
+          transform: scale(0.9);
+        }
+      }
+      @media (max-width: 992px) {
+        .cp-scale {
+          transform: scale(0.88);
+        }
+      }
+      @media (max-width: 768px) {
+        .cp-scale {
+          transform: scale(0.86);
+        }
+      }
+      @media (max-width: 600px) {
+        .cp-scale {
+          transform: scale(0.84);
+        }
+      }
+
+      /* Main container */
+      .container-box {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px 20px;
+        margin: 0 auto;
+        box-shadow: var(--shadow);
+        max-width: 960px;
+        width: 960px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin: 0 0 16px;
+        color: var(--brand-900);
+        letter-spacing: 0.02em;
+      }
+
+      .card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        padding: 18px 16px;
+      }
+
+      /* Grid (12 cols) */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 16px;
+      }
+      .col-12 {
+        grid-column: span 12;
+      }
+      .col-6 {
+        grid-column: span 6;
+      }
+      .col-4 {
+        grid-column: span 4;
+      }
+      .col-3 {
+        grid-column: span 3;
+      }
+
+      @media (max-width: 900px) {
+        .container-box {
+          width: 92vw;
+          max-width: 92vw;
+          padding: 16px 14px;
+        }
+        h1 {
+          font-size: 1.35rem;
+        }
+        .col-6,
+        .col-4,
+        .col-3 {
+          grid-column: span 12;
+        }
+      }
+
+      /* Forms */
+      label {
+        display: block;
+        font-weight: 700;
+        color: var(--brand-900);
+        margin-bottom: 6px;
+      }
+      input[type="text"],
+      input[type="number"],
+      select {
+        width: 100%;
+        background: var(--bg);
+        color: var(--ink);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        outline: none;
+        transition: border-color 0.12s, box-shadow 0.12s;
+      }
+      input:focus,
+      select:focus {
+        border-color: var(--brand-500);
+        box-shadow: 0 0 0 3px rgba(214, 122, 25, 0.18);
+      }
+      .row {
+        margin-bottom: 10px;
+      }
+
+      /* Checkbox */
+      .checkbox {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .checkbox input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+      }
+
+      /* Actions */
+      .actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 6px;
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-block;
+        border: 1px solid var(--brand-600);
+        background: var(--brand-500);
+        color: #fff;
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+        text-decoration: none;
+        transition: filter 0.15s ease;
+      }
+      .btn:hover {
+        filter: brightness(0.96);
+      }
+      .btn--ghost {
+        background: #f2f2f2;
+        color: #333;
+        border: 1px solid #d7d7d7;
+      }
+      .btn--ghost:hover {
+        filter: none;
+        background: #ececec;
+      }
+
+      .mono {
+        font-family: "Fira Mono", "Consolas", monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cp-desktop-wrap">
+      <div class="cp-desktop">
+        <div class="cp-scale">
+          <main class="container-box">
+            <h1>
+              <%= (typeof title !== 'undefined' && title) ? title : 'Edit Plan'
+              %>
+            </h1>
+
+            <% /* safe local fallback */ %> <% var _plan = (typeof plan ===
+            'object' && plan) ? plan : {}; %>
+
+            <div class="card">
+              <form
+                action="/admin/plans/edit/<%= _plan.id %>"
+                method="POST"
+                class="grid"
+              >
+                <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <% } %>
+
+                <!-- Name -->
+                <div class="col-6 row">
+                  <label for="name">Name</label>
+                  <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    value="<%= _plan.name || '' %>"
+                    required
+                  />
+                </div>
+
+                <!-- Percentage -->
+                <div class="col-6 row">
+                  <label for="percentage">% Return</label>
+                  <input
+                    id="percentage"
+                    type="number"
+                    step="0.01"
+                    name="percentage"
+                    value="<%= (typeof _plan.percentage !== 'undefined' ? _plan.percentage : (_plan.percent || '')) %>"
+                    required
+                  />
+                </div>
+
+                <!-- Min / Max -->
+                <div class="col-6 row">
+                  <label for="min_amount">Min Amount</label>
+                  <input
+                    id="min_amount"
+                    type="number"
+                    name="min_amount"
+                    value="<%= _plan.min_amount || '' %>"
+                    required
+                  />
+                </div>
+                <div class="col-6 row">
+                  <label for="max_amount">Max Amount</label>
+                  <input
+                    id="max_amount"
+                    type="number"
+                    name="max_amount"
+                    value="<%= _plan.max_amount || '' %>"
+                    required
+                  />
+                </div>
+
+                <!-- Duration -->
+                <div class="col-6 row">
+                  <label for="duration_days">Duration (days)</label>
+                  <input
+                    id="duration_days"
+                    type="number"
+                    name="duration_days"
+                    value="<%= _plan.duration_days || 0 %>"
+                    required
+                  />
+                </div>
+                <div class="col-6 row">
+                  <label for="duration_hours">Duration (hours)</label>
+                  <input
+                    id="duration_hours"
+                    type="number"
+                    name="duration_hours"
+                    value="<%= _plan.duration_hours || 0 %>"
+                    required
+                  />
+                </div>
+
+                <!-- Badge / Key / Sort -->
+                <div class="col-4 row">
+                  <label for="badge">Badge</label>
+                  <input
+                    id="badge"
+                    type="text"
+                    name="badge"
+                    value="<%= _plan.badge || '' %>"
+                  />
+                </div>
+                <div class="col-4 row">
+                  <label for="key">Key</label>
+                  <input
+                    id="key"
+                    type="text"
+                    name="key"
+                    value="<%= _plan.key || '' %>"
+                  />
+                </div>
+                <div class="col-4 row">
+                  <label for="sort_order">Sort Order</label>
+                  <input
+                    id="sort_order"
+                    type="number"
+                    name="sort_order"
+                    value="<%= _plan.sort_order || 0 %>"
+                  />
+                </div>
+
+                <!-- Active -->
+                <div class="col-12 row">
+                  <label class="checkbox" for="is_active">
+                    <input id="is_active" type="checkbox" name="is_active"
+                    value="true" <%= _plan.is_active ? 'checked' : '' %> />
+                    <span>Active</span>
+                  </label>
+                </div>
+
+                <!-- Actions -->
+                <div class="col-12 actions">
+                  <button class="btn" type="submit">Update Plan</button>
+                  <a class="btn btn--ghost" href="/admin/plans">Cancel</a>
+                </div>
+              </form>
+            </div>
+
+            <!-- Optional debug -->
+            <!-- <pre class="mono"><%= JSON.stringify(_plan, null, 2) %></pre> -->
+          </main>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

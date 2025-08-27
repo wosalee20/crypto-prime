@@ -1,0 +1,41 @@
+</nav>
+<%
+  const LOGO_TEXT = 'CRYPTO PRIME';
+%>
+<div class="cp-brand">
+  <div class="cp-logo-circle">CP</div>
+  <div class="cp-logo-text"><%= LOGO_TEXT %></div>
+  <button class="cp-collapse" title="Collapse" onclick="document.body.classList.toggle('cp-collapsed')">
+    <i class="la la-circle"></i>
+  </button>
+</div>
+
+<nav class="cp-nav">
+  <a href="/admin/dashboard" class="cp-link <%= active==='dashboard'?'is-active':'' %>">
+    <i class="la la-home"></i><span>Dashboard</span>
+  </a>
+
+  <div class="cp-section">Investment System</div>
+  <a href="/admin/deposits/all" class="cp-link <%= active==='deposits'?'is-active':'' %>">
+    <i class="la la-credit-card"></i><span>Deposits</span>
+  </a>
+  <a href="/admin/withdrawals/pending" class="cp-link <%= active==='withdrawals'?'is-active':'' %>">
+    <i class="la la-bank"></i><span>Withdrawals</span>
+  </a>
+
+  <div class="cp-section">Management</div>
+  <a href="/admin/users" class="cp-link <%= active==='users'?'is-active':'' %>">
+    <i class="la la-users"></i><span>Users</span>
+  </a>
+  <a href="/admin/plans" class="cp-link <%= active==='plans'?'is-active':'' %>">
+    <i class="la la-list"></i><span>Plans</span>
+  </a>
+  <a href="/admin/wallets/company" class="cp-link <%= active==='wallets'?'is-active':'' %>">
+    <i class="la la-wallet"></i><span>Company Wallets</span>
+  </a>
+
+  <div class="cp-section">Earnings</div>
+  <a href="/admin/earnings/credit" class="cp-link <%= active==='earnings'?'is-active':'' %>">
+    <i class="la la-hand-holding-usd"></i><span>Credit Earnings</span>
+  </a>
+</nav>

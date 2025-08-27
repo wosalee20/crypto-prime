@@ -1,0 +1,37 @@
+<header class="cp-topbar">
+  <div class="left">
+    <button
+      class="icon-btn"
+      onclick="document.body.classList.toggle('cp-collapsed')"
+      aria-label="Toggle sidebar"
+    >
+      <i class="la la-bars"></i>
+    </button>
+  </div>
+
+  <div class="right">
+    <div class="cp-user">
+      <img
+        class="cp-user-img"
+        src="<%= process.env.BRAND_AVATAR || 'https://i.pravatar.cc/64?u=cpadmin' %>"
+        alt="avatar"
+      />
+
+      <!-- EMAIL ONLY -->
+      <span class="cp-user-name">
+        <%= (user && user.email) || 'admin@yourdomain.com' %>
+      </span>
+
+      <!-- SECURE LOGOUT (POST + CSRF) -->
+      <form method="post" action="/admin/logout" class="cp-logout-form">
+        <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <% } %>
+        <button type="submit" class="cp-btn-logout">
+          <i class="la la-sign-out-alt" aria-hidden="true"></i>
+          <span class="logout-text">Logout</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</header>

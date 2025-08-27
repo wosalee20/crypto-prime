@@ -1,0 +1,185 @@
+<!-- views/dashboard/index.ejs -->
+
+<header class="mb-3" aria-label="Dashboard header">
+  <h1 class="title-large">Dashboard</h1>
+  <div class="text-sub">Crypto-Prime <strong>Admin</strong></div>
+</header>
+
+<div class="cp-grid row-gap" role="region" aria-label="Key metrics">
+  <div class="cp-col-3">
+    <div class="cp-card kpi kpi-teal">
+      <div class="kpi-icon"><i class="la la-users" aria-hidden="true"></i></div>
+      <div class="kpi-value"><%= String(stats.users || 0) %></div>
+      <div class="kpi-label">Total Users</div>
+      <a
+        class="cp-btn cp-btn-light mt-2"
+        href="/admin/users"
+        aria-label="View all users"
+        >View All</a
+      >
+    </div>
+  </div>
+
+  <div class="cp-col-3">
+    <div class="cp-card kpi kpi-green">
+      <div class="kpi-icon">
+        <i class="la la-user-check" aria-hidden="true"></i>
+      </div>
+      <div class="kpi-value"><%= String(stats.usersActive || 0) %></div>
+      <div class="kpi-label">Total Verified Users</div>
+      <a class="cp-btn cp-btn-light mt-2" href="/admin/users?filter=verified"
+        >View All</a
+      >
+    </div>
+  </div>
+
+  <div class="cp-col-3">
+    <div class="cp-card kpi kpi-red">
+      <div class="kpi-icon"><i class="la la-ban" aria-hidden="true"></i></div>
+      <div class="kpi-value">
+        <%= String(Math.max(0, (stats.users || 0) - (stats.usersActive || 0)))
+        %>
+      </div>
+      <div class="kpi-label">Total Email Unverified Users</div>
+      <a
+        class="cp-btn cp-btn-light mt-2"
+        href="/admin/users?filter=email_unverified"
+        >View All</a
+      >
+    </div>
+  </div>
+
+  <div class="cp-col-3">
+    <div class="cp-card kpi kpi-pink">
+      <div class="kpi-icon"><i class="la la-ban" aria-hidden="true"></i></div>
+      <div class="kpi-value">0</div>
+      <div class="kpi-label">Total SMS Unverified Users</div>
+      <a
+        class="cp-btn cp-btn-light mt-2"
+        href="/admin/users?filter=sms_unverified"
+        >View All</a
+      >
+    </div>
+  </div>
+
+  <div class="cp-col-3">
+    <div class="cp-card kpi kpi-orange">
+      <div class="kpi-icon">
+        <i class="la la-wallet" aria-hidden="true"></i>
+      </div>
+      <div class="kpi-value">
+        <%= new
+        Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(stats.depositsAmount||0))
+        %>
+      </div>
+      <div class="kpi-label">User Deposit Wallet</div>
+      <a class="cp-btn cp-btn-light mt-2" href="/admin/deposits/all"
+        >View All</a
+      >
+    </div>
+  </div>
+
+  <div class="cp-col-3">
+    <div class="cp-card kpi kpi-navy">
+      <div class="kpi-icon">
+        <i class="la la-money-bill-wave" aria-hidden="true"></i>
+      </div>
+      <div class="kpi-value">
+        <%= new
+        Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(stats.withdrawalsAmount||0))
+        %>
+      </div>
+      <div class="kpi-label">User Interest Wallet</div>
+      <a class="cp-btn cp-btn-light mt-2" href="/admin/withdrawals/all"
+        >View All</a
+      >
+    </div>
+  </div>
+
+  <div class="cp-col-3">
+    <div class="cp-card kpi kpi-cyan">
+      <div class="kpi-icon">
+        <i class="la la-clipboard-check" aria-hidden="true"></i>
+      </div>
+      <div class="kpi-value"><%= String(stats.totalPlans || 0) %></div>
+      <div class="kpi-label">Total Plan</div>
+      <a class="cp-btn cp-btn-light mt-2" href="/admin/plans">View All</a>
+    </div>
+  </div>
+
+  <div class="cp-col-3">
+    <div class="cp-card kpi kpi-purple">
+      <div class="kpi-icon">
+        <i class="la la-hand-holding-usd" aria-hidden="true"></i>
+      </div>
+      <div class="kpi-value">
+        <%= new
+        Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(stats.totalEarnings||0))
+        %>
+      </div>
+      <div class="kpi-label">Total Investment</div>
+      <a class="cp-btn cp-btn-light mt-2" href="/admin/deposits/all"
+        >View All</a
+      >
+    </div>
+  </div>
+</div>
+
+<section class="mt-3 cp-card" aria-labelledby="new-users-title">
+  <div class="d-flex align-items-center justify-content-between">
+    <h2 id="new-users-title" class="h5 m-0">New Users</h2>
+    <a class="cp-btn cp-btn-light" href="/admin/users">View all</a>
+  </div>
+
+  <div class="mt-3 table-wrap">
+    <table class="table cp-table" aria-describedby="new-users-title">
+      <thead>
+        <tr>
+          <th scope="col">User</th>
+          <th scope="col">Username</th>
+          <th scope="col">Email</th>
+          <th scope="col">Status</th>
+          <th scope="col">Joined</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if ((recentRows || []).length === 0) { %>
+        <tr>
+          <td
+            colspan="5"
+            class="text-sub"
+            style="text-align: center; padding: 18px"
+          >
+            No users yet.
+            <a
+              href="/admin/users"
+              class="cp-btn cp-btn-primary"
+              style="margin-left: 8px"
+              >Go to Users</a
+            >
+          </td>
+        </tr>
+        <% } else { %> <% recentRows.forEach(function(u) { %>
+        <tr>
+          <td><%= u.name %></td>
+          <td><%= u.username || '-' %></td>
+          <td><%= u.email || '' %></td>
+          <td>
+            <% var st = String(u.status || '').toLowerCase(); %> <% if (st ===
+            'verified' || st === 'active') { %>
+            <span class="badge badge-success">Verified</span>
+            <% } else if (st === 'pending') { %>
+            <span class="badge badge-warn">Pending</span>
+            <% } else if (st === 'banned' || st === 'blocked') { %>
+            <span class="badge badge-danger">Blocked</span>
+            <% } else { %>
+            <span class="badge"><%= u.status || '-' %></span>
+            <% } %>
+          </td>
+          <td><%= new Date(u.created_at).toLocaleString() %></td>
+        </tr>
+        <% }) %> <% } %>
+      </tbody>
+    </table>
+  </div>
+</section>

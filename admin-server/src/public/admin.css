@@ -1,0 +1,484 @@
+/* =========================================================
+   Professional Admin Theme — White / Black / Brown-Orange
+   Valid plain CSS (no nesting). Desktop parity on mobile.
+   ========================================================= */
+
+/* -------- Core Palette -------- */
+:root {
+  --cp-white: #ffffff;
+  --cp-black: #0b0b0b;
+
+  /* Brownish orange family (tweak if you like) */
+  --cp-brown-50: #fff4e8;
+  --cp-brown-100: #ffe6cc;
+  --cp-brown-200: #ffd4a6;
+  --cp-brown-300: #f8b772;
+  --cp-brown-400: #e9953e;
+  --cp-brown-500: #d67a19; /* Primary brand */
+  --cp-brown-600: #b26014;
+  --cp-brown-700: #8d4c10;
+  --cp-brown-800: #6b390c;
+  --cp-brown-900: #4b2808;
+
+  --cp-bg: var(--cp-white);
+  --cp-ink: var(--cp-black);
+  --cp-muted: #6b6b6b;
+  --cp-border: #e8e8e8;
+  --cp-soft: #f7f7f7;
+
+  --cp-panel: #ffffff; /* cards */
+  --cp-panel-2: #fafafa; /* subtle headers/alt rows */
+
+  --cp-brand: var(--cp-brown-500);
+  --cp-brand-ink: var(--cp-brown-900);
+
+  --cp-success: #159947;
+  --cp-danger: #c62828;
+  --cp-warn: #a06d00;
+
+  --cp-radius: 16px;
+  --cp-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* -------- Desktop-Parity Container -------- */
+.cp-desktop-wrap {
+  width: 100%;
+  height: 100%;
+  overflow-x: auto; /* enable horizontal pan on small screens */
+  background: var(--cp-soft);
+}
+
+.cp-desktop {
+  min-width: 1280px; /* your desktop baseline */
+  min-height: 100vh;
+}
+
+/* -------- Base Typography -------- */
+html,
+body {
+  height: 100%;
+}
+
+body.cp-body {
+  margin: 0;
+  font-family: Montserrat, system-ui, Segoe UI, Roboto, Helvetica, Arial,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--cp-ink);
+  background: var(--cp-bg);
+}
+
+/* -------- Layout: Sidebar + Main -------- */
+.cp-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 280px;
+  overflow: auto;
+  background: var(--cp-white);
+  border-right: 1px solid var(--cp-border);
+}
+
+.cp-main {
+  margin-left: 280px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--cp-soft);
+}
+
+.cp-content {
+  padding: 26px 28px 40px;
+}
+
+/* Topbar */
+.cp-topbar {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px 0 8px;
+  background: var(--cp-white);
+  border-bottom: 1px solid var(--cp-border);
+}
+
+/* Minimal styles for new topbar user and logout button */
+.cp-topbar .cp-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cp-logout-form {
+  margin-left: 6px;
+}
+/* Make logout button use brand color for text and border */
+.cp-btn-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--cp-brand, #d67a19);
+  border: 1px solid var(--cp-brand, #d67a19);
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: color 0.2s, border-color 0.2s;
+}
+.cp-btn-logout:hover {
+  color: var(--cp-brand-ink, #4b2808);
+  border-color: #c26a1f; /* brownish orange */
+  box-shadow: 0 0 0 2px rgba(194, 106, 31, 0.18);
+}
+@media (max-width: 560px) {
+  .cp-btn-logout .logout-text {
+    display: none;
+  } /* icon-only on very small screens */
+}
+
+/* Buttons (icon and regular) */
+.icon-btn {
+  background: transparent;
+  border: 0;
+  color: var(--cp-ink);
+  font-size: 22px;
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+.icon-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* User menu */
+.cp-user {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.cp-user-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.cp-user-name {
+  color: var(--cp-ink);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.cp-user:hover .cp-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(6px);
+}
+
+.cp-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  min-width: 180px;
+  padding: 8px;
+  background: var(--cp-white);
+  border: 1px solid var(--cp-border);
+  border-radius: 12px;
+  box-shadow: var(--cp-shadow);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: 0.15s ease;
+}
+.cp-menu a {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  color: var(--cp-ink);
+  text-decoration: none;
+  border-radius: 10px;
+}
+.cp-menu a:hover {
+  background: var(--cp-soft);
+}
+
+/* -------- Brand + Sidebar Nav -------- */
+.cp-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 16px;
+}
+.cp-logo-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--cp-brown-400), var(--cp-brand));
+  color: var(--cp-white);
+  font-weight: 800;
+}
+.cp-logo-text {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--cp-ink);
+}
+.cp-collapse {
+  margin-left: auto;
+  background: none;
+  border: 0;
+  color: var(--cp-muted);
+}
+
+.cp-nav {
+  padding: 8px;
+}
+.cp-section {
+  margin: 16px 10px 6px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cp-muted);
+  font-weight: 700;
+}
+
+.cp-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: var(--cp-ink);
+  text-decoration: none;
+  opacity: 0.95;
+}
+.cp-link i {
+  font-size: 20px;
+  opacity: 0.9;
+}
+.cp-link:hover {
+  background: var(--cp-soft);
+}
+.cp-link.is-active {
+  background: linear-gradient(
+    90deg,
+    rgba(214, 122, 25, 0.12),
+    rgba(214, 122, 25, 0.06)
+  );
+  border: 1px solid rgba(214, 122, 25, 0.28);
+}
+
+/* -------- Cards / Stats -------- */
+.cp-card {
+  background: var(--cp-panel);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  padding: 18px;
+  box-shadow: var(--cp-shadow);
+}
+.cp-stat {
+  position: relative;
+  overflow: hidden;
+  min-height: 156px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.cp-stat-icon {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  font-size: 28px;
+  opacity: 0.65;
+  color: var(--cp-brown-700);
+}
+.cp-stat-value {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--cp-ink);
+}
+.cp-stat-label {
+  margin-top: 4px;
+  color: var(--cp-muted);
+  font-weight: 600;
+}
+
+/* -------- Grid System (12 columns; desktop preserved) -------- */
+.cp-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 18px;
+}
+.cp-col-3 {
+  grid-column: span 3;
+}
+.cp-col-4 {
+  grid-column: span 4;
+}
+.cp-col-6 {
+  grid-column: span 6;
+}
+.cp-col-12 {
+  grid-column: span 12;
+}
+
+/* -------- Tables -------- */
+.table-wrap {
+  overflow-x: auto;
+}
+table.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  background: var(--cp-panel);
+  color: var(--cp-ink);
+}
+table.table th,
+table.table td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--cp-border);
+}
+table.table th {
+  background: var(--cp-panel-2);
+  color: var(--cp-brown-800);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+/* -------- Forms -------- */
+.search input,
+.search select,
+.search button {
+  font-size: 15px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--cp-border);
+  background: var(--cp-white);
+  color: var(--cp-ink);
+}
+.search button {
+  background: var(--cp-brand);
+  color: var(--cp-white);
+  border-color: transparent;
+  cursor: pointer;
+}
+.search button:hover {
+  filter: brightness(0.95);
+}
+
+/* -------- Badges / Buttons -------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.badge-success {
+  background: #e9f7ef;
+  color: var(--cp-success);
+  border: 1px solid #c7ebd4;
+}
+.badge-danger {
+  background: #fdeaea;
+  color: var(--cp-danger);
+  border: 1px solid #f5caca;
+}
+.badge-warn {
+  background: #fff6e6;
+  color: var(--cp-warn);
+  border: 1px solid #ffe5b8;
+}
+
+.cp-btn {
+  display: inline-block;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.cp-btn-light {
+  background: var(--cp-soft);
+  color: var(--cp-ink);
+  border: 1px solid var(--cp-border);
+}
+.cp-btn-light:hover {
+  filter: brightness(0.98);
+}
+.cp-btn-primary {
+  background: var(--cp-brand);
+  color: var(--cp-white);
+  border: 1px solid var(--cp-brown-600);
+}
+.cp-btn-primary:hover {
+  filter: brightness(0.96);
+}
+
+/* -------- Utilities -------- */
+.mt-2 {
+  margin-top: 0.5rem;
+}
+.title-large {
+  font-size: 28px;
+  font-weight: 900;
+  margin: 0 0 8px;
+  color: var(--cp-ink);
+}
+.text-sub {
+  color: var(--cp-muted);
+}
+.row-gap {
+  row-gap: 18px;
+}
+
+/* -------- Collapsed Sidebar (desktop parity preserved) -------- */
+.cp-collapsed .cp-sidebar {
+  width: 84px;
+}
+.cp-collapsed .cp-main {
+  margin-left: 84px;
+}
+.cp-collapsed .cp-link span,
+.cp-collapsed .cp-logo-text,
+.cp-collapsed .cp-section {
+  display: none;
+}
+
+/* =========================================================
+   RESPONSIVE NOTES
+   We DO NOT change the layout on mobile. We keep the exact
+   desktop grid and allow horizontal scrolling via the
+   .cp-desktop-wrap container. The rules below only handle
+   ergonomics (touch sizes), not structure.
+   ========================================================= */
+
+/* Touch ergonomics on narrow viewports */
+@media (max-width: 600px) {
+  .icon-btn {
+    padding: 10px 12px;
+  }
+  .cp-topbar {
+    height: auto;
+    padding: 8px 8px;
+  }
+  .title-large {
+    font-size: 24px;
+  }
+  table.table {
+    font-size: 14px;
+  }
+}
+
+/* Optional: make sidebar collapsible automatically under ~1000px (still desktop layout) */
+@media (max-width: 1000px) {
+  .cp-sidebar {
+    width: 220px;
+  }
+  .cp-main {
+    margin-left: 220px;
+  }
+}

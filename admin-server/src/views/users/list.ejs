@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title><%= title || "Users" %> — Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/static/admin.css" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #ffffff;
+        --ink: #0b0b0b;
+        --muted: #6b6b6b;
+        --soft: #f7f7f7;
+        --border: #e8e8e8;
+        --brand-400: #e9953e;
+        --brand-500: #d67a19;
+        --brand-600: #b26014;
+        --brand-900: #4b2808;
+        --danger: #c62828;
+        --success: #2e7d32;
+        --warn: #f39c12;
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      }
+      body,
+      .app {
+        background: var(--soft);
+        color: var(--ink);
+        font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+      }
+      .container {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px 22px;
+        margin: 20px auto;
+        box-shadow: var(--shadow);
+        max-width: 1180px;
+        width: 95%;
+      }
+      .title-large {
+        font-size: 1.7rem;
+        font-weight: 800;
+        margin: 0;
+        color: var(--brand-900);
+      }
+      .mb-4 {
+        margin-bottom: 1.2rem;
+      }
+      .flex {
+        display: flex;
+      }
+      .items-center {
+        align-items: center;
+      }
+      .justify-between {
+        justify-content: space-between;
+      }
+      .btn {
+        display: inline-block;
+        border: 1px solid var(--brand-600);
+        background: var(--brand-500);
+        color: #fff;
+        font-weight: 700;
+        padding: 9px 16px;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: filter 0.15s ease;
+      }
+      .btn:hover {
+        filter: brightness(0.96);
+      }
+      .table-wrap {
+        overflow-x: auto;
+        margin-top: 16px;
+        border-radius: 12px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: transparent;
+        font-size: 0.95rem;
+      }
+      thead th {
+        text-align: left;
+        font-weight: 700;
+        padding: 12px 10px;
+        background: var(--brand-900);
+        color: #fff;
+      }
+      tbody td {
+        padding: 11px 10px;
+        border-top: 1px solid var(--border);
+      }
+      tbody tr:hover {
+        background: #faf6f2;
+      }
+      .chip {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 9999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        background: var(--brand-400);
+        color: #fff;
+      }
+      .chip.success {
+        background: var(--success);
+      }
+      .chip.danger {
+        background: var(--danger);
+      }
+      .chip.warn {
+        background: var(--warn);
+      }
+    </style>
+  </head>
+  <body class="app">
+    <main class="container">
+      <div class="flex items-center justify-between mb-4">
+        <h1 class="title-large">Users</h1>
+        <a href="/admin/users/create/new" class="btn">Create User</a>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Username</th>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (!rows || rows.length === 0) { %>
+            <tr>
+              <td
+                colspan="5"
+                style="text-align: center; color: var(--muted); padding: 16px"
+              >
+                No users found.
+              </td>
+            </tr>
+            <% } else { %> <% rows.forEach(function(u){ const fullname =
+            [(u.first_name||''),(u.last_name||'')].filter(Boolean).join(' ') ||
+            '(no name)'; const status = (u.status||'').toLowerCase(); const
+            statusClass = status==='active'||status==='verified' ? 'success' :
+            status==='pending' ? 'warn' :
+            (status==='blocked'||status==='banned') ? 'danger' : ''; %>
+            <tr>
+              <td>
+                <a class="underline" href="/admin/users/<%= u.id %>"
+                  ><%= u.email %></a
+                >
+              </td>
+              <td><%= u.username || '-' %></td>
+              <td><%= fullname %></td>
+              <td>
+                <span class="chip <%= statusClass %>"><%= u.status %></span>
+              </td>
+              <td><%= new Date(u.created_at).toLocaleString() %></td>
+            </tr>
+            <% }) %> <% } %>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>

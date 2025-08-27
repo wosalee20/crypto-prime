@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title><%= (title || "Credit Earnings") %> — Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/static/admin.css" rel="stylesheet" />
+
+    <style>
+      /* ================= White / Black / Brown-Orange Theme ================= */
+      :root {
+        --bg: #ffffff;
+        --ink: #0b0b0b;
+        --muted: #6b6b6b;
+        --soft: #f7f7f7;
+        --border: #e8e8e8;
+        --brand-50: #fff4e8;
+        --brand-200: #ffd4a6;
+        --brand-400: #e9953e;
+        --brand-500: #d67a19;
+        --brand-600: #b26014;
+        --brand-900: #4b2808;
+        --success: #159947;
+        --danger: #c0392b;
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--soft);
+        color: var(--ink);
+        font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+      }
+      html,
+      body {
+        overflow: auto;
+      } /* ensure page scroll if content grows */
+
+      /* Centered + scalable canvas so mobile mirrors desktop layout (smaller) */
+      .cp-desktop-wrap {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background: var(--soft);
+      }
+      .cp-desktop {
+        display: block;
+        width: max-content;
+        min-width: 100%;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 12px 0;
+      }
+      .cp-scale {
+        transform-origin: top left;
+        transform: scale(0.94);
+      }
+      @media (max-width: 1200px) {
+        .cp-scale {
+          transform: scale(0.9);
+        }
+      }
+      @media (max-width: 992px) {
+        .cp-scale {
+          transform: scale(0.88);
+        }
+      }
+      @media (max-width: 768px) {
+        .cp-scale {
+          transform: scale(0.86);
+        }
+      }
+      @media (max-width: 600px) {
+        .cp-scale {
+          transform: scale(0.84);
+        }
+      }
+
+      /* Container */
+      .container-box {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px 20px;
+        margin: 0 auto;
+        box-shadow: var(--shadow);
+        max-width: 1150px;
+        width: 1150px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin: 0 0 16px;
+        letter-spacing: 0.02em;
+        color: var(--brand-900);
+      }
+
+      .card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        padding: 18px 16px;
+        margin-bottom: 18px;
+      }
+
+      /* Grid */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 16px;
+      }
+      .col-12 {
+        grid-column: span 12;
+      }
+      .col-6 {
+        grid-column: span 6;
+      }
+      .col-4 {
+        grid-column: span 4;
+      }
+
+      @media (max-width: 900px) {
+        .container-box {
+          width: 92vw;
+          max-width: 92vw;
+          padding: 16px 14px;
+        }
+        .col-6,
+        .col-4 {
+          grid-column: span 12;
+        }
+      }
+
+      /* Forms */
+      label {
+        display: block;
+        font-weight: 800;
+        margin-bottom: 6px;
+        color: var(--brand-900);
+      }
+      input[type="text"],
+      input[type="number"],
+      input[type="datetime-local"],
+      textarea,
+      select {
+        width: 100%;
+        background: var(--bg);
+        color: var(--ink);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        outline: none;
+        transition: border-color 0.12s, box-shadow 0.12s;
+      }
+      textarea {
+        min-height: 92px;
+        resize: vertical;
+      }
+      select option {
+        background: #fff;
+        color: #111;
+      }
+      input:focus,
+      textarea:focus,
+      select:focus {
+        border-color: var(--brand-500);
+        box-shadow: 0 0 0 3px rgba(214, 122, 25, 0.18);
+      }
+      .row-inline {
+        display: flex;
+        gap: 10px;
+      }
+      @media (max-width: 900px) {
+        .row-inline {
+          flex-direction: column;
+        }
+      }
+
+      /* Actions */
+      .actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 8px;
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-block;
+        border: 1px solid var(--brand-600);
+        background: var(--brand-500);
+        color: #fff;
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+        text-decoration: none;
+        transition: filter 0.15s ease;
+      }
+      .btn:hover {
+        filter: brightness(0.96);
+      }
+      .btn--ghost {
+        background: #f2f2f2;
+        color: #333;
+        border: 1px solid #d7d7d7;
+      }
+      .btn--ghost:hover {
+        filter: none;
+        background: #ececec;
+      }
+
+      /* Alerts */
+      .alert {
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-weight: 700;
+        border: 1px solid transparent;
+        margin-bottom: 12px;
+      }
+      .alert--success {
+        background: #e9f7ef;
+        color: var(--success);
+        border-color: #cfeedd;
+      }
+      .alert--error {
+        background: #fdeaea;
+        color: var(--danger);
+        border-color: #f5caca;
+      }
+
+      /* Table with reliable horizontal scroll */
+      .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: transparent;
+        color: var(--ink);
+        min-width: 900px;
+      }
+      thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        font-weight: 800;
+        color: var(--brand-900);
+        background: var(--soft);
+        border-bottom: 1px solid var(--border);
+      }
+      td,
+      th {
+        padding: 12px 10px;
+        border-top: 1px solid var(--border);
+        white-space: nowrap;
+      }
+      tbody tr:hover {
+        background: #fff8f0;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+      .mono {
+        font-family: "Fira Mono", "Consolas", monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cp-desktop-wrap">
+      <div class="cp-desktop">
+        <div class="cp-scale">
+          <main class="container-box">
+            <h1>Credit Earnings</h1>
+
+            <% if (flash && flash.success) { %>
+            <div class="alert alert--success"><%= flash.success %></div>
+            <% } %> <% if (flash && flash.error) { %>
+            <div class="alert alert--error"><%= flash.error %></div>
+            <% } %>
+
+            <!-- Credit form -->
+            <div class="card">
+              <form method="post" action="/admin/earnings/credit" class="grid">
+                <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <% } %>
+
+                <!-- Email dropdown with quick filter -->
+                <div class="col-6">
+                  <label for="user_email">User Email</label>
+                  <div class="row-inline">
+                    <input
+                      id="emailFilter"
+                      type="text"
+                      placeholder="Type to filter emails…"
+                    />
+                    <select id="user_email" name="user_email" required>
+                      <option value="" disabled selected>Select a user…</option>
+                      <% (users || []).forEach(function(u){ %>
+                      <option value="<%= u.email %>"><%= u.email %></option>
+                      <% }); %>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <label for="amount">Amount</label>
+                  <input
+                    id="amount"
+                    type="number"
+                    step="0.00000001"
+                    name="amount"
+                    required
+                    placeholder="e.g. 25.5"
+                    value="<%= (prefill && prefill.amount) || '' %>"
+                  />
+                </div>
+
+                <div class="col-4">
+                  <label for="credited_at">Credited At (optional)</label>
+                  <input
+                    id="credited_at"
+                    type="datetime-local"
+                    name="credited_at"
+                    value="<%= (prefill && prefill.credited_at) || '' %>"
+                  />
+                </div>
+
+                <div class="col-12">
+                  <label for="note">Note (optional)</label>
+                  <textarea
+                    id="note"
+                    name="note"
+                    placeholder="Internal note (visible to admin)"
+                  >
+<%= (prefill && prefill.note) || '' %></textarea
+                  >
+                </div>
+
+                <div class="col-12 actions">
+                  <button class="btn" type="submit">Credit Earning</button>
+                  <a class="btn btn--ghost" href="/admin/earnings/credit"
+                    >Reset</a
+                  >
+                </div>
+              </form>
+            </div>
+
+            <!-- Recent credits -->
+            <div class="card">
+              <h2
+                style="
+                  margin: 0 0 10px;
+                  font-size: 1.2rem;
+                  font-weight: 800;
+                  color: var(--brand-900);
+                "
+              >
+                Recent Credits
+              </h2>
+              <div class="table-wrap">
+                <table class="table" aria-label="Recent credits">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>User Email</th>
+                      <th>Amount</th>
+                      <th>Note</th>
+                      <th>Credited</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (!recent || recent.length === 0) { %>
+                    <tr>
+                      <td colspan="5" class="muted">No credits yet.</td>
+                    </tr>
+                    <% } else { %> <% recent.forEach(function(r){ %>
+                    <tr>
+                      <td class="mono">#<%= r.id %></td>
+                      <td><%= r.user_email %></td>
+                      <td class="mono">
+                        <%= Number(r.amount || 0).toLocaleString() %>
+                      </td>
+                      <td><%= r.note || '—' %></td>
+                      <td class="mono">
+                        <%= new Date(r.credited_at ||
+                        r.created_at).toLocaleString() %>
+                      </td>
+                    </tr>
+                    <% }) %> <% } %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Simple client-side filter for the dropdown (kept as your original logic)
+      (function () {
+        var filter = document.getElementById("emailFilter");
+        var select = document.getElementById("user_email");
+        if (!filter || !select) return;
+
+        var allOptions = Array.prototype.slice.call(select.options);
+        filter.addEventListener("input", function () {
+          var q = filter.value.toLowerCase().trim();
+          var head = allOptions[0]; // "Select a user…" option
+          var rest = allOptions.slice(1);
+
+          select.innerHTML = "";
+          if (head) select.appendChild(head.cloneNode(true));
+
+          rest.forEach(function (opt) {
+            if (
+              !q ||
+              (opt.value && opt.value.toLowerCase().indexOf(q) !== -1)
+            ) {
+              select.appendChild(opt.cloneNode(true));
+            }
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

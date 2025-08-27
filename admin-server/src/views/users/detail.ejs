@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title><%= title || "User Detail" %> — Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/static/admin.css" rel="stylesheet" />
+
+    <style>
+      /* ================= White / Black / Brown-Orange Theme ================= */
+      :root{
+        --bg:#ffffff; --ink:#0b0b0b; --muted:#6b6b6b; --soft:#f7f7f7; --border:#e8e8e8;
+        --brand-50:#fff4e8; --brand-200:#ffd4a6; --brand-400:#e9953e; --brand-500:#d67a19; --brand-600:#b26014; --brand-900:#4b2808;
+        --success:#159947; --danger:#c62828; --warn:#a06d00;
+        --radius:16px; --shadow:0 10px 30px rgba(0,0,0,0.06);
+      }
+
+      html, body { height:100%; }
+      body, .app { margin:0; background:var(--soft); color:var(--ink); font-family:"Segoe UI","Roboto",Arial,sans-serif; }
+      html, body { overflow:auto; } /* always allow scrolling if needed */
+
+      /* Centered layout with predictable scaling (same pattern as other pages) */
+      .cp-desktop-wrap{ width:100%; height:100%; overflow:auto; background:var(--soft); }
+      .cp-desktop{ display:block; width:max-content; min-width:100%; min-height:100vh; margin:0 auto; padding:12px 0; }
+      .cp-scale{ transform-origin: top left; transform: scale(0.94); }
+      @media (max-width:1200px){ .cp-scale{ transform: scale(0.90); } }
+      @media (max-width: 992px){ .cp-scale{ transform: scale(0.88); } }
+      @media (max-width: 768px){ .cp-scale{ transform: scale(0.86); } }
+      @media (max-width: 600px){ .cp-scale{ transform: scale(0.84); } }
+
+      /* Container & cards */
+      .container{
+        background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);
+        padding:24px 20px; margin:0 auto; box-shadow:var(--shadow);
+        max-width:1100px; width:1100px;
+      }
+      .title-large{ font-size:1.6rem; font-weight:800; margin:0 0 16px; color:var(--brand-900); }
+      .card{
+        background:var(--bg); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow);
+        padding:18px 16px;
+      }
+      .mb-4{ margin-bottom:1.2rem; }
+      .mt-4{ margin-top:1.2rem; }
+
+      /* Simple grid utilities (2 columns on md+) */
+      .grid{ display:grid; gap:16px; }
+      @media (min-width:900px){
+        .grid-2{ grid-template-columns: 1fr 1fr; }
+      }
+
+      /* Alerts */
+      .alert{
+        border-radius:12px; padding:10px 12px; font-weight:700; font-size:.95rem;
+        border:1px solid transparent;
+      }
+      .alert--success{ background:#e9f7ef; color:var(--success); border-color:#cfeedd; }
+      .alert--error{ background:#fdeaea; color:var(--danger); border-color:#f5caca; }
+
+      /* Chips / badges */
+      .chip{
+        display:inline-block; padding:4px 10px; border-radius:999px; font-size:.85rem; font-weight:700;
+        background:#fff6e6; color:var(--brand-900); border:1px solid #ffe3b3;
+      }
+      .chip.success{ background:#e9f7ef; color:var(--success); border-color:#cfeedd; }
+      .chip.warn{ background:#fff6e6; color:var(--warn); border-color:#ffe3b3; }
+      .chip.danger{ background:#fdeaea; color:var(--danger); border-color:#f5caca; }
+
+      /* Buttons */
+      .btn{
+        display:inline-block; border:1px solid var(--brand-600); background:var(--brand-500); color:#fff;
+        padding:10px 14px; border-radius:12px; font-weight:800; letter-spacing:.02em; cursor:pointer; text-decoration:none;
+        transition:filter .15s ease;
+      }
+      .btn:hover{ filter:brightness(.96); }
+      .btn-primary{ background:var(--brand-500); border-color:var(--brand-600); color:#fff; }
+      .btn-ghost{ background:#f2f2f2; color:#333; border:1px solid #d7d7d7; }
+      .btn-ghost:hover{ filter:none; background:#ececec; }
+
+      /* Forms */
+      .form-row{ display:grid; grid-template-columns:1fr; gap:12px; }
+      .form-group{ margin-bottom:12px; }
+      label{ display:block; font-weight:700; color:var(--brand-900); margin-bottom:6px; }
+      input[type="text"], input[type="number"], input[type="datetime-local"], select, textarea{
+        width:100%; background:var(--bg); color:var(--ink);
+        border:1px solid var(--border); border-radius:12px; padding:10px 12px; outline:none;
+        transition:border-color .12s, box-shadow .12s;
+      }
+      textarea{ min-height:100px; resize:vertical; }
+      input:focus, select:focus, textarea:focus{
+        border-color:var(--brand-500);
+        box-shadow:0 0 0 3px rgba(214,122,25,.18);
+      }
+
+      /* Tables */
+      .overflow-x-auto{ overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--border); border-radius:12px; }
+      table{ width:100%; border-collapse:collapse; min-width: 900px; }
+      thead th{
+        text-align:left; font-weight:800; background:var(--soft); color:var(--brand-900);
+        padding:12px 10px; border-bottom:1px solid var(--border);
+        white-space:nowrap;
+      }
+      td{ padding:12px 10px; border-top:1px solid var(--border); white-space:nowrap; vertical-align:middle; }
+      tbody tr:hover{ background:#fff8f0; }
+
+      .text-right{ text-align:right; }
+      .font-mono{ font-family:"Fira Mono","Consolas",monospace; }
+      .center{ text-align:center; }
+
+      /* Small-screen tweaks */
+      @media (max-width:700px){
+        .container{ width:92vw; max-width:92vw; padding:16px 14px; }
+        .title-large{ font-size:1.35rem; }
+      }
+    </style>
+  </head>
+  <body class="app">
+    <%- include('../partials/topnav', { active: 'users' }) %>
+
+    <div class="cp-desktop-wrap">
+      <div class="cp-desktop">
+        <div class="cp-scale">
+          <main class="container">
+            <h1 class="title-large mb-4">User Detail</h1>
+
+            <!-- Flash -->
+            <% if (flash && flash.success) { %>
+              <div class="alert alert--success mb-4"><%= flash.success %></div>
+            <% } %>
+            <% if (flash && flash.error) { %>
+              <div class="alert alert--error mb-4"><%= flash.error %></div>
+            <% } %>
+
+            <div class="grid grid-2">
+              <!-- Profile -->
+              <div class="card">
+                <h2 style="margin:0 0 10px; font-weight:800; color:var(--brand-900)">Profile</h2>
+
+                <div style="font-size:.95rem; line-height:1.6;">
+                  <% 
+                    var fullName = [user.first_name||'', user.last_name||''].filter(Boolean).join(' ') || '(no name)';
+                    var st = String(user.status||'').toLowerCase();
+                    var chipClass = st==='active'||st==='verified' ? 'success' : st==='pending' ? 'warn' : (st==='blocked'||st==='banned'||st==='suspended') ? 'danger' : '';
+                  %>
+                  <div><b>Email:</b> <%= user.email %></div>
+                  <div><b>Username:</b> <%= user.username || '—' %></div>
+                  <div><b>Name:</b> <%= fullName %></div>
+                  <div><b>Status:</b> <span class="chip <%= chipClass %>"><%= user.status %></span></div>
+                  <div><b>Joined:</b> <%= new Date(user.created_at).toLocaleString() %></div>
+                </div>
+
+                <form method="post" action="/admin/users/<%= user.id %>/status" class="mt-4">
+                  <% if (csrfToken) { %><input type="hidden" name="_csrf" value="<%= csrfToken %>"><% } %>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="status">Change status</label>
+                      <select id="status" name="status">
+                        <option value="active" <%= user.status==='active'?'selected':'' %>>Active</option>
+                        <option value="suspended" <%= user.status==='suspended'?'selected':'' %>>Suspended</option>
+                        <option value="blocked" <%= user.status==='blocked'?'selected':'' %>>Blocked</option>
+                        <option value="pending" <%= user.status==='pending'?'selected':'' %>>Pending</option>
+                        <option value="verified" <%= user.status==='verified'?'selected':'' %>>Verified</option>
+                      </select>
+                    </div>
+                    <div class="form-group" style="align-self:end;">
+                      <button class="btn btn-primary" type="submit">Update</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Credit earning (STARTS HIDDEN) -->
+              <div class="card" id="earningCard" style="display:none;">
+                <h2 style="margin:0 0 10px; font-weight:800; color:var(--brand-900)">Credit Earning</h2>
+
+                <form method="post" action="/admin/users/<%= user.id %>/earnings" id="earningForm">
+                  <% if (csrfToken) { %>
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <% } %>
+
+                  <div class="form-group">
+                    <label>User Email</label>
+                    <input type="text" value="<%= user.email %>" disabled />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="amount">Amount</label>
+                    <input id="amount" name="amount" type="number" step="0.00000001" required placeholder="e.g. 25.5" />
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="credited_at">Credited At (optional)</label>
+                      <input id="credited_at" name="credited_at" type="datetime-local" />
+                    </div>
+                    <div class="form-group">
+                      <label for="note">Note (optional)</label>
+                      <textarea id="note" name="note" placeholder="Internal note (visible to admin)"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="mt-4" style="display:flex; gap:8px;">
+                    <button class="btn btn-primary" type="submit">Credit Earning</button>
+                    <button class="btn btn-ghost" type="button" id="btnCloseEarning">Cancel</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Earnings history -->
+            <div class="card mt-4" id="earnings">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+                <h2 style="margin:0; font-weight:800; color:var(--brand-900)">Recent Earnings for <%= user.email %></h2>
+                <!-- Optional always-visible "Add Earning" trigger -->
+                <button id="btnOpenEarningTop" class="btn btn-primary btn-sm" type="button" style="padding:8px 12px;">+ Add Earnings</button>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th class="text-right">Amount</th>
+                      <th>Note</th>
+                      <th>Credited</th>
+                      <th>Created</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (!earnings || earnings.length === 0) { %>
+                      <tr>
+                        <td colspan="5" class="center" style="color:var(--muted); padding:16px;">No earnings yet.</td>
+                      </tr>
+                      <tr>
+                        <td colspan="5" class="center" style="padding-top: 8px;">
+                          <button id="btnOpenEarningEmpty" class="btn btn-primary btn-sm" type="button" style="padding:8px 12px;">+ Add Earnings</button>
+                        </td>
+                      </tr>
+                    <% } else { %>
+                      <% earnings.forEach(function(r){ %>
+                        <tr>
+                          <td>#<%= r.id %></td>
+                          <td class="text-right"><%= Number(r.amount || 0).toLocaleString() %></td>
+                          <td><%= r.note || '—' %></td>
+                          <td class="font-mono"><%= r.credited_at ? new Date(r.credited_at).toLocaleString() : '—' %></td>
+                          <td class="font-mono"><%= r.created_at ? new Date(r.created_at).toLocaleString() : '—' %></td>
+                        </tr>
+                      <% }) %>
+                    <% } %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var card     = document.getElementById('earningCard');
+        var btnOpenTop  = document.getElementById('btnOpenEarningTop');   // always visible
+        var btnOpenEmpty  = document.getElementById('btnOpenEarningEmpty'); // when empty
+        var btnClose = document.getElementById('btnCloseEarning');
+        var amount   = document.getElementById('amount');
+
+        function openForm() {
+          if (card && card.style.display !== 'block') card.style.display = 'block';
+          if (amount) amount.focus();
+          if (card && card.scrollIntoView) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        function closeForm() {
+          if (card) card.style.display = 'none';
+        }
+
+        if (btnOpenTop)   btnOpenTop.addEventListener('click', openForm);
+        if (btnOpenEmpty) btnOpenEmpty.addEventListener('click', openForm);
+        if (btnClose)     btnClose.addEventListener('click', closeForm);
+      })();
+    </script>
+  </body>
+</html>

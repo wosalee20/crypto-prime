@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>
+      <%= (typeof title !== 'undefined' && title) ? title : 'Company Wallets' %>
+      — Admin
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/static/admin.css" rel="stylesheet" />
+
+    <style>
+      /* ================= White / Black / Brown-Orange Theme ================= */
+      :root {
+        --bg: #ffffff;
+        --ink: #0b0b0b;
+        --muted: #6b6b6b;
+        --soft: #f7f7f7;
+        --border: #e8e8e8;
+        --brand-50: #fff4e8;
+        --brand-200: #ffd4a6;
+        --brand-400: #e9953e;
+        --brand-500: #d67a19;
+        --brand-600: #b26014;
+        --brand-900: #4b2808;
+        --success: #159947;
+        --danger: #c0392b;
+        --neutral: #555;
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+      body.app {
+        margin: 0;
+        background: var(--soft);
+        color: var(--ink);
+        font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+      }
+      html,
+      body {
+        overflow: auto;
+      } /* ensure page scroll if content grows */
+
+      /* Centered + scalable desktop canvas (keeps mobile looking like desktop) */
+      .cp-desktop-wrap {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background: var(--soft);
+      }
+      .cp-desktop {
+        display: block;
+        width: max-content;
+        min-width: 100%;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 12px 0;
+      }
+      .cp-scale {
+        transform-origin: top left;
+        transform: scale(0.94);
+      }
+      @media (max-width: 1200px) {
+        .cp-scale {
+          transform: scale(0.9);
+        }
+      }
+      @media (max-width: 992px) {
+        .cp-scale {
+          transform: scale(0.88);
+        }
+      }
+      @media (max-width: 768px) {
+        .cp-scale {
+          transform: scale(0.86);
+        }
+      }
+      @media (max-width: 600px) {
+        .cp-scale {
+          transform: scale(0.84);
+        }
+      }
+
+      /* Page container */
+      .container-box {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px 20px;
+        margin: 0 auto;
+        box-shadow: var(--shadow);
+        max-width: 1150px;
+        width: 1150px;
+      }
+
+      /* Header / Search */
+      .page-head h1 {
+        color: var(--brand-900);
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin: 0 0 12px;
+        letter-spacing: 0.02em;
+      }
+      .search {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .search input {
+        background: var(--bg);
+        color: var(--ink);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        outline: none;
+        transition: border-color 0.12s, box-shadow 0.12s;
+      }
+      .search input:focus {
+        border-color: var(--brand-500);
+        box-shadow: 0 0 0 3px rgba(214, 122, 25, 0.18);
+      }
+      .search button {
+        border: 1px solid var(--brand-600);
+        background: var(--brand-500);
+        color: #fff;
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+        transition: filter 0.15s ease;
+      }
+      .search button:hover {
+        filter: brightness(0.96);
+      }
+
+      /* Cards */
+      .card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        margin-bottom: 18px;
+        padding: 16px 14px;
+      }
+      .card-title {
+        color: var(--brand-900);
+        font-size: 1.2rem;
+        font-weight: 800;
+        margin: 0 0 12px;
+      }
+
+      /* Form grid (stack by default) */
+      .form-grid .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+      .form-row--inline {
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+      }
+      label {
+        color: var(--brand-900);
+        font-weight: 700;
+      }
+
+      .form-row input,
+      .form-row select {
+        background: var(--bg);
+        color: var(--ink);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.12s, box-shadow 0.12s;
+      }
+      .form-row input:focus,
+      .form-row select:focus {
+        border-color: var(--brand-500);
+        box-shadow: 0 0 0 3px rgba(214, 122, 25, 0.18);
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 6px;
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-block;
+        border: 1px solid var(--brand-600);
+        background: var(--brand-500);
+        color: #fff;
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+        text-decoration: none;
+        transition: filter 0.15s ease;
+      }
+      .btn:hover {
+        filter: brightness(0.96);
+      }
+      .btn--ghost {
+        background: #f2f2f2;
+        color: #333;
+        border: 1px solid #d7d7d7;
+      }
+      .btn--ghost:hover {
+        filter: none;
+        background: #ececec;
+      }
+      .btn--danger {
+        background: var(--danger);
+        border-color: #aa2a2a;
+        color: #fff;
+      }
+      .btn--sm {
+        padding: 7px 12px;
+        border-radius: 10px;
+        font-weight: 700;
+      }
+
+      /* Badges */
+      .badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        background: #efefef;
+        color: #333;
+        border: 1px solid #e2e2e2;
+      }
+      .badge-ok {
+        background: #e9f7ef;
+        color: var(--success);
+        border-color: #cfeedd;
+      }
+      .badge-muted {
+        background: #f3f3f3;
+        color: #666;
+        border-color: #e9e9e9;
+      }
+
+      .checkbox {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .checkbox input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+      }
+
+      /* Alerts */
+      .alert {
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-weight: 700;
+        color: #fff;
+        border: 1px solid transparent;
+        margin-bottom: 12px;
+      }
+      .alert--success {
+        background: #e9f7ef;
+        color: var(--success);
+        border-color: #cfeedd;
+      }
+      .alert--error {
+        background: #fdeaea;
+        color: var(--danger);
+        border-color: #f5caca;
+      }
+
+      /* Table with reliable horizontal scroll */
+      .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        background: transparent;
+        color: var(--ink);
+        min-width: 1100px;
+      }
+      .table th,
+      .table td {
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--border);
+        background: transparent;
+        white-space: nowrap;
+      }
+      .table th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        font-weight: 800;
+        color: var(--brand-900);
+        background: var(--soft);
+        border-bottom: 1px solid var(--border);
+      }
+      .table tbody tr:hover {
+        background: #fff8f0;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+      .mono {
+        font-family: "Fira Mono", "Consolas", monospace;
+        font-size: 0.96rem;
+      }
+      .t-right {
+        text-align: right;
+      }
+
+      @media (max-width: 920px) {
+        .container-box {
+          width: 92vw;
+          max-width: 92vw;
+          padding: 16px 14px;
+        }
+        .page-head h1 {
+          font-size: 1.35rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="app">
+    %> <% var _title = (typeof title !== 'undefined' && title) ? title :
+    'Company Wallets'; var _query = (typeof query !== 'undefined' && query !=
+    null) ? String(query) : ''; var _flash = (typeof flash === 'object' &&
+    flash) ? flash : {}; var _editing = (typeof editing === 'object' && editing)
+    ? editing : null; var _rows = (typeof rows !== 'undefined' &&
+    Array.isArray(rows)) ? rows : []; var _csrf = (typeof csrfToken !==
+    'undefined' && csrfToken) ? csrfToken : null; var _pageInfo = (typeof
+    pageInfo === 'object' && pageInfo) ? pageInfo : null; %>
+
+    <div class="cp-desktop-wrap">
+      <div class="cp-desktop">
+        <div class="cp-scale">
+          <main class="container-box">
+            <header class="page-head">
+              <h1><%= _title || "Company Deposit Wallets" %></h1>
+              <form method="get" class="search">
+                <input
+                  name="q"
+                  placeholder="Search label / coin / address"
+                  value="<%= _query %>"
+                  aria-label="Search wallets"
+                />
+                <button type="submit">Search</button>
+              </form>
+            </header>
+
+            <% if (_flash && _flash.success) { %>
+            <div class="alert alert--success"><%= _flash.success %></div>
+            <% } %> <% if (_flash && _flash.error) { %>
+            <div class="alert alert--error"><%= _flash.error %></div>
+            <% } %>
+
+            <!-- CREATE / EDIT FORM -->
+            <section class="card" aria-labelledby="wallet-form-title">
+              <h2 id="wallet-form-title" class="card-title">
+                <%= _editing ? "Edit Wallet" : "Add New Wallet" %>
+              </h2>
+
+              <form
+                method="post"
+                action="<%= _editing ? ('/admin/wallets/company/' + _editing.id) : '/admin/wallets/company' %>"
+                class="form-grid"
+              >
+                <% if (_csrf) { %>
+                <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+                <% } %>
+
+                <div class="form-row">
+                  <label for="coin">Coin</label>
+                  <input
+                    id="coin"
+                    type="text"
+                    name="coin"
+                    required
+                    placeholder="e.g. BTC"
+                    value="<%= _editing ? (_editing.coin || '') : '' %>"
+                    pattern="[A-Za-z0-9\-_.]{2,10}"
+                    title="2–10 chars. Letters/numbers/dash/underscore/dot"
+                    style="text-transform: uppercase"
+                    oninput="this.value=this.value.toUpperCase()"
+                  />
+                </div>
+
+                <div class="form-row">
+                  <label for="address">Address</label>
+                  <input
+                    id="address"
+                    type="text"
+                    name="address"
+                    required
+                    placeholder="Company receiving address"
+                    value="<%= _editing ? (_editing.address || '') : '' %>"
+                    class="mono"
+                  />
+                </div>
+
+                <div class="form-row">
+                  <label for="memo_tag">Memo / Tag (optional)</label>
+                  <input
+                    id="memo_tag"
+                    type="text"
+                    name="memo_tag"
+                    placeholder="Destination Tag / Memo (if required)"
+                    value="<%= _editing ? (_editing.memo_tag || '') : '' %>"
+                    class="mono"
+                  />
+                </div>
+
+                <div class="form-row">
+                  <label for="label">Label</label>
+                  <input
+                    id="label"
+                    type="text"
+                    name="label"
+                    required
+                    placeholder="Internal label e.g. Main BTC"
+                    value="<%= _editing ? (_editing.label || '') : '' %>"
+                  />
+                </div>
+
+                <div
+                  class="form-row form-row--inline"
+                  role="group"
+                  aria-label="Wallet flags"
+                >
+                  <label class="checkbox" for="is_active">
+                    <input type="checkbox" id="is_active" name="is_active"
+                    value="true" <%= _editing ? (_editing.is_active ? 'checked'
+                    : '') : 'checked' %> />
+                    <span>Active</span>
+                  </label>
+
+                  <label class="checkbox" for="is_default">
+                    <input type="checkbox" id="is_default" name="is_default"
+                    value="true" <%= (_editing && _editing.is_default) ?
+                    'checked' : '' %> />
+                    <span>Default for this coin</span>
+                  </label>
+                </div>
+
+                <div class="form-actions">
+                  <button class="btn" type="submit">
+                    <%= _editing ? "Save Changes" : "Create Wallet" %>
+                  </button>
+                  <% if (_editing) { %>
+                  <a href="/admin/wallets/company" class="btn btn--ghost"
+                    >Cancel</a
+                  >
+                  <% } %>
+                </div>
+              </form>
+            </section>
+
+            <!-- LIST -->
+            <section class="card" aria-labelledby="wallets-title">
+              <h2 id="wallets-title" class="card-title">Wallets</h2>
+
+              <div class="table-wrap">
+                <table class="table" aria-describedby="wallets-title">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Coin</th>
+                      <th>Label</th>
+                      <th>Address</th>
+                      <th>Memo/Tag</th>
+                      <th>Status</th>
+                      <th>Default</th>
+                      <th>Created</th>
+                      <th class="t-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (!_rows || _rows.length === 0) { %>
+                    <tr>
+                      <td colspan="9" class="muted">No wallets yet.</td>
+                    </tr>
+                    <% } else { %> <% _rows.forEach(function (w) { %>
+                    <tr>
+                      <td>#<%= w.id %></td>
+                      <td><%= w.coin %></td>
+                      <td><%= w.label || '—' %></td>
+                      <td class="mono"><%= w.address %></td>
+                      <td class="mono"><%= w.memo_tag || '—' %></td>
+                      <td>
+                        <span
+                          class="badge <%= w.is_active ? 'badge-ok' : 'badge-muted' %>"
+                        >
+                          <%= w.is_active ? 'Active' : 'Inactive' %>
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          class="badge <%= w.is_default ? 'badge-ok' : 'badge-muted' %>"
+                        >
+                          <%= w.is_default ? 'Yes' : 'No' %>
+                        </span>
+                      </td>
+                      <td>
+                        <% var _created = w && w.created_at ? new
+                        Date(w.created_at) : null; var createdStr = _created &&
+                        !isNaN(_created.getTime()) ? _created.toLocaleString() :
+                        '—'; %> <%= createdStr %>
+                      </td>
+                      <td class="t-right">
+                        <a
+                          class="btn btn--sm"
+                          href="/admin/wallets/company/<%= w.id %>/edit"
+                          style="margin-right: 6px"
+                          >Edit</a
+                        >
+
+                        <form
+                          method="post"
+                          action="/admin/wallets/company/<%= w.id %>/toggle"
+                          style="display: inline"
+                        >
+                          <% if (_csrf) { %><input
+                            type="hidden"
+                            name="_csrf"
+                            value="<%= _csrf %>"
+                          /><% } %>
+                          <button class="btn btn--sm" style="margin-right: 6px">
+                            <%= w.is_active ? 'Deactivate' : 'Activate' %>
+                          </button>
+                        </form>
+
+                        <% if (!w.is_default) { %>
+                        <form
+                          method="post"
+                          action="/admin/wallets/company/<%= w.id %>/default"
+                          style="display: inline"
+                        >
+                          <% if (_csrf) { %><input
+                            type="hidden"
+                            name="_csrf"
+                            value="<%= _csrf %>"
+                          /><% } %>
+                          <button class="btn btn--sm" style="margin-right: 6px">
+                            Set Default
+                          </button>
+                        </form>
+                        <% } %>
+
+                        <form
+                          method="post"
+                          action="/admin/wallets/company/<%= w.id %>/delete"
+                          style="display: inline"
+                          onsubmit="return confirm('Delete this wallet? This cannot be undone.')"
+                        >
+                          <% if (_csrf) { %><input
+                            type="hidden"
+                            name="_csrf"
+                            value="<%= _csrf %>"
+                          /><% } %>
+                          <button class="btn btn--sm btn--danger">
+                            Delete
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                    <% }); %> <% } %>
+                  </tbody>
+                </table>
+              </div>
+
+              <% if (_pageInfo) { %> <%- include('../partials/pagination', {
+              pageInfo: _pageInfo }) %> <% } %>
+            </section>
+          </main>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

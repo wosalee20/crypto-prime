@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title><%= title || "All Withdrawals" %> — Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/static/admin.css" rel="stylesheet" />
+    <style>
+      /* ================= White / Black / Brown-Orange Theme ================= */
+      :root {
+        --bg: #ffffff;
+        --ink: #0b0b0b;
+        --muted: #6b6b6b;
+        --soft: #f7f7f7;
+        --border: #e8e8e8;
+        --brand-50: #fff4e8;
+        --brand-100: #ffe6cc;
+        --brand-200: #ffd4a6;
+        --brand-300: #f2b874;
+        --brand-400: #e9953e;
+        --brand-500: #d67a19;
+        --brand-600: #b26014;
+        --brand-800: #6b390c;
+        --brand-900: #4b2808;
+        --success: #159947;
+        --danger: #c62828;
+        --warn: #a06d00;
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+      body,
+      .app {
+        margin: 0;
+        background: var(--soft);
+        color: var(--ink);
+        font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+      }
+
+      /* Page-level scrolls always available */
+      html,
+      body {
+        overflow-x: auto;
+        overflow-y: auto;
+      }
+
+      /* Centered desktop layout that can grow wider than viewport */
+      .cp-desktop-wrap {
+        width: 100%;
+        height: 100%;
+        overflow-x: auto;
+        overflow-y: auto;
+        background: var(--soft);
+        touch-action: pan-x pan-y;
+      }
+      .cp-desktop {
+        display: block;
+        width: max-content; /* expand to true content width */
+        min-width: 100%; /* never smaller than viewport */
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 12px 0;
+      }
+      /* Gentle scale (no width compensation → scroll math correct) */
+      .cp-scale {
+        transform-origin: top left;
+        transform: scale(0.9);
+      }
+      @media (max-width: 1200px) {
+        .cp-scale {
+          transform: scale(0.86);
+        }
+      }
+      @media (max-width: 992px) {
+        .cp-scale {
+          transform: scale(0.82);
+        }
+      }
+      @media (max-width: 768px) {
+        .cp-scale {
+          transform: scale(0.78);
+        }
+      }
+      @media (max-width: 600px) {
+        .cp-scale {
+          transform: scale(0.75);
+        }
+      }
+
+      /* Container / card */
+      .container {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px 18px;
+        margin: 0 auto;
+        box-shadow: var(--shadow);
+        max-width: 1280px;
+        width: 1280px;
+      }
+      .card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        margin-top: 16px;
+        padding: 16px 14px;
+      }
+
+      /* Header & search */
+      .page-head h1 {
+        color: var(--ink);
+        font-size: 1.55rem;
+        font-weight: 800;
+        margin: 0 0 12px;
+        letter-spacing: 0.2px;
+      }
+      .search {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .search input,
+      .search select {
+        background: var(--bg);
+        color: var(--ink);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        min-height: 40px;
+        outline: none;
+      }
+      .search select option {
+        background: var(--bg);
+        color: var(--ink);
+      }
+      .search button {
+        background: var(--brand-500);
+        color: #fff;
+        border: 1px solid var(--brand-600);
+        border-radius: 10px;
+        padding: 10px 16px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: filter 0.15s;
+      }
+      .search button:hover {
+        filter: brightness(0.96);
+      }
+
+      /* Table with dependable horizontal scroll */
+      .table-wrap {
+        display: block;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        touch-action: pan-x;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        background: transparent;
+        color: var(--ink);
+        margin: 0;
+        font-size: 0.97rem;
+
+        /* Ensure overflow on narrow screens so scrollbar appears */
+        min-width: 1500px; /* adjust if you add/remove columns */
+      }
+      .table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        font-weight: 800;
+        background: var(--soft) !important;
+        color: var(--brand-900);
+        border-bottom: 1px solid var(--border) !important;
+        text-align: left;
+        letter-spacing: 0.02em;
+      }
+      .table th,
+      .table td {
+        border-top: 1px solid var(--border) !important;
+        background: transparent !important;
+        padding: 10px 10px;
+        vertical-align: middle;
+        white-space: nowrap;
+      }
+      .table tbody tr:hover {
+        background: #fff8f0 !important;
+      }
+
+      .t-right {
+        text-align: right;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .mono {
+        font-family: "Fira Mono", "Consolas", monospace;
+        font-size: 0.95rem;
+      }
+
+      /* Badges */
+      .badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        background: var(--soft);
+        color: var(--ink);
+        border: 1px solid var(--border);
+      }
+      .badge-success {
+        background: #e9f7ef !important;
+        color: var(--success) !important;
+        border-color: #cfeedd !important;
+      }
+      .badge-warn {
+        background: #fff6e6 !important;
+        color: var(--warn) !important;
+        border-color: #ffe3b3 !important;
+      }
+      .badge-danger {
+        background: #fdeaea !important;
+        color: var(--danger) !important;
+        border-color: #f5caca !important;
+      }
+
+      /* Responsive tweaks */
+      @media (max-width: 900px) {
+        .page-head h1 {
+          font-size: 1.35rem;
+        }
+        .table th,
+        .table td {
+          padding: 9px 8px;
+        }
+      }
+      @media (max-width: 700px) {
+        .page-head h1 {
+          font-size: 1.2rem;
+        }
+        .search input,
+        .search select {
+          min-height: 36px;
+          padding: 8px 10px;
+        }
+        .search button {
+          padding: 8px 12px;
+        }
+        .table {
+          font-size: 0.94rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="app">
+    <!-- Centered + scalable + scrollable wrapper -->
+    <div class="cp-desktop-wrap">
+      <div class="cp-desktop">
+        <div class="cp-scale">
+          <main class="container">
+            <header class="page-head">
+              <h1><%= title || "All Withdrawals" %></h1>
+              <form method="get" class="search">
+                <input
+                  name="q"
+                  placeholder="Search email / txid / address / coin"
+                  value="<%= query || '' %>"
+                  aria-label="Search withdrawals"
+                />
+                <select
+                  name="status"
+                  id="withdrawal-status-select"
+                  aria-label="Filter by status"
+                >
+                  <option value="all">All</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+                <button type="submit">Go</button>
+              </form>
+              <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                  var select = document.getElementById(
+                    "withdrawal-status-select"
+                  );
+                  select.value = window.location.pathname.includes("pending")
+                    ? "pending"
+                    : window.location.pathname.includes("approved")
+                    ? "approved"
+                    : window.location.pathname.includes("rejected")
+                    ? "rejected"
+                    : "all";
+                  select.addEventListener("change", function () {
+                    window.location.href =
+                      select.value === "pending"
+                        ? "/admin/withdrawals/pending"
+                        : select.value === "approved"
+                        ? "/admin/withdrawals/approved"
+                        : select.value === "rejected"
+                        ? "/admin/withdrawals/rejected"
+                        : "/admin/withdrawals/all";
+                  });
+                });
+              </script>
+            </header>
+
+            <section class="card">
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>User</th>
+                      <th>Coin</th>
+                      <th class="t-right">Amount</th>
+                      <th class="t-right">Fee</th>
+                      <th>Status</th>
+                      <th>TXID</th>
+                      <th>To Address</th>
+                      <th>Created</th>
+                      <th>Processed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (!items || items.length === 0) { %>
+                    <tr>
+                      <td colspan="10" class="muted">No withdrawals found.</td>
+                    </tr>
+                    <% } %> <% (items || []).forEach(function(row){ %>
+                    <tr>
+                      <td>#<%= row.id %></td>
+                      <td><%= row.user_email || row.user_id %></td>
+                      <td><%= row.coin %></td>
+                      <td class="t-right">
+                        <%= Number(row.amount || 0).toLocaleString() %>
+                      </td>
+                      <td class="t-right">
+                        <%= Number(row.fee || 0).toLocaleString() %>
+                      </td>
+                      <td>
+                        <% var col = (row.status === 'approved' || row.status
+                        === 'completed') ? 'badge-success' : (row.status ===
+                        'pending') ? 'badge-warn' : (row.status === 'rejected'
+                        || row.status === 'failed') ? 'badge-danger' : 'badge';
+                        %>
+                        <span class="badge <%= col %>"><%= row.status %></span>
+                      </td>
+                      <td class="mono"><%= row.txid || "—" %></td>
+                      <td class="mono"><%= row.to_address %></td>
+                      <td><%= new Date(row.created_at).toLocaleString() %></td>
+                      <td>
+                        <%= row.processed_at ? new
+                        Date(row.processed_at).toLocaleString() : "—" %>
+                      </td>
+                    </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+
+              <% if (typeof pageInfo !== 'undefined' && pageInfo) { %> <%-
+              include('../partials/pagination', { pageInfo: pageInfo }) %> <% }
+              %>
+            </section>
+          </main>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

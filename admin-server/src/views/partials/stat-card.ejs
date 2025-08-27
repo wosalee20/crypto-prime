@@ -1,0 +1,10 @@
+<div class="cp-card cp-stat">
+  <div class="cp-stat-icon"><%- iconHtml || '' %></div>
+  <div class="cp-stat-value"><%= value %></div>
+  <div class="cp-stat-label"><%= title %></div>
+  <% if (link) { %><a class="cp-btn cp-btn-light mt-2" href="<%= link %>"
+    >View All</a
+  ><% } %> <% if (error) { %>
+  <div class="cp-error"><%= error %></div>
+  <% } %>
+</div>

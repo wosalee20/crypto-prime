@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title><%= title || "Approved Deposits" %> — Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/static/admin.css" rel="stylesheet" />
+    <style>
+      /* ================= White / Black / Brown-Orange Theme ================= */
+      :root {
+        --bg: #ffffff;
+        --ink: #0b0b0b;
+        --muted: #6b6b6b;
+        --soft: #f7f7f7;
+        --border: #e8e8e8;
+        --brand-50: #fff4e8;
+        --brand-100: #ffe6cc;
+        --brand-200: #ffd4a6;
+        --brand-300: #f2b874;
+        --brand-400: #e9953e;
+        --brand-500: #d67a19;
+        --brand-600: #b26014;
+        --brand-800: #6b390c;
+        --brand-900: #4b2808;
+        --success: #159947;
+        --danger: #c62828;
+        --warn: #a06d00;
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      }
+
+      /* Base */
+      html,
+      body {
+        height: 100%;
+      }
+      body,
+      .app {
+        margin: 0;
+        background: var(--soft);
+        color: var(--ink);
+        font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+      }
+
+      /* === Always allow page-level horizontal & vertical scroll === */
+      html,
+      body {
+        overflow-x: auto;
+        overflow-y: auto;
+      }
+
+      /* Centered layout */
+      .cp-desktop-wrap {
+        width: 100%;
+        height: 100%;
+        overflow-x: auto;
+        overflow-y: auto; /* page scrolls */
+        background: var(--soft);
+        touch-action: pan-x pan-y;
+      }
+      .cp-desktop {
+        /* Let it grow to the true content width so scrolling reaches the end */
+        display: block;
+        width: max-content;
+        min-width: 100%;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 12px 0;
+      }
+
+      /* Slight scale (no width compensation so scroll math stays correct) */
+      .cp-scale {
+        transform-origin: top left;
+        transform: scale(0.9);
+      }
+      @media (max-width: 1200px) {
+        .cp-scale {
+          transform: scale(0.86);
+        }
+      }
+      @media (max-width: 992px) {
+        .cp-scale {
+          transform: scale(0.82);
+        }
+      }
+      @media (max-width: 768px) {
+        .cp-scale {
+          transform: scale(0.78);
+        }
+      }
+      @media (max-width: 600px) {
+        .cp-scale {
+          transform: scale(0.75);
+        }
+      }
+
+      /* Container / card */
+      .container {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px 18px;
+        margin: 0 auto;
+        box-shadow: var(--shadow);
+        max-width: 1280px;
+        width: 1280px;
+      }
+      .card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        margin-top: 16px;
+        padding: 16px 14px;
+      }
+
+      /* Head + controls */
+      .page-head h1 {
+        margin: 0 0 12px;
+        font-size: 1.55rem;
+        font-weight: 800;
+        color: var(--ink);
+        letter-spacing: 0.2px;
+      }
+      .search {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .search input,
+      .search select {
+        background: var(--bg);
+        color: var(--ink);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        min-height: 40px;
+        outline: none;
+      }
+      .search select option {
+        background: var(--bg);
+        color: var(--ink);
+      }
+      .cp-btn,
+      .cp-btn-primary {
+        display: inline-block;
+        background: var(--brand-500);
+        color: #fff;
+        border: 1px solid var(--brand-600);
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition: filter 0.15s;
+      }
+      .cp-btn:hover,
+      .cp-btn-primary:hover {
+        filter: brightness(0.96);
+      }
+
+      /* === Table scrolling that actually works on all devices === */
+      .table-wrap {
+        display: block;
+        overflow-x: auto; /* horizontal scroll lives here */
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        touch-action: pan-x; /* ensure horizontal panning */
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        background: transparent;
+        color: var(--ink);
+        margin: 0;
+        font-size: 0.97rem;
+
+        /* KEY: ensure content can exceed wrapper width -> scrollbar appears */
+        min-width: 1400px; /* adjust up/down as you like */
+      }
+      .table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        font-weight: 800;
+        background: var(--soft) !important;
+        color: var(--brand-900);
+        border-bottom: 1px solid var(--border) !important;
+        text-align: left;
+        letter-spacing: 0.02em;
+      }
+      .table th,
+      .table td {
+        border-top: 1px solid var(--border) !important;
+        background: transparent !important;
+        padding: 10px 10px;
+        vertical-align: middle;
+        white-space: nowrap; /* keep row height tight */
+      }
+      .table tbody tr:hover {
+        background: #fff8f0 !important;
+      }
+
+      /* Utilities */
+      .t-right {
+        text-align: right;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .mono {
+        font-family: "Fira Mono", "Consolas", monospace;
+        font-size: 0.95rem;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        background: var(--soft);
+        color: var(--ink);
+        border: 1px solid var(--border);
+      }
+      .badge-success {
+        background: #e9f7ef !important;
+        color: var(--success) !important;
+        border-color: #cfeedd !important;
+      }
+
+      @media (max-width: 900px) {
+        .page-head h1 {
+          font-size: 1.35rem;
+        }
+        .table th,
+        .table td {
+          padding: 9px 8px;
+        }
+      }
+      @media (max-width: 700px) {
+        .page-head h1 {
+          font-size: 1.2rem;
+        }
+        .search input,
+        .search select {
+          min-height: 36px;
+          padding: 8px 10px;
+        }
+        .cp-btn,
+        .cp-btn-primary {
+          padding: 8px 12px;
+        }
+        .table {
+          font-size: 0.94rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="app">
+    <%- include('../partials/topnav', { active: 'deposits' }) %>
+
+    <!-- Centered + scalable + scrollable -->
+    <div class="cp-desktop-wrap">
+      <div class="cp-desktop">
+        <div class="cp-scale">
+          <main class="container">
+            <header class="page-head">
+              <h1><%= title || "Approved Deposits" %></h1>
+
+              <form method="get" class="search" id="deposit-search-form">
+                <input
+                  name="q"
+                  placeholder="Search email / txid / coin"
+                  value="<%= query || '' %>"
+                  aria-label="Search deposits"
+                />
+                <select
+                  name="status"
+                  id="deposit-status-select"
+                  aria-label="Filter by status"
+                >
+                  <option value="all">All</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+                <button type="submit" class="cp-btn cp-btn-primary">Go</button>
+              </form>
+
+              <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                  var select = document.getElementById("deposit-status-select");
+                  select.value = "approved";
+                  select.addEventListener("change", function () {
+                    location.href =
+                      select.value === "pending"
+                        ? "/admin/deposits/pending"
+                        : select.value === "approved"
+                        ? "/admin/deposits/approved"
+                        : select.value === "rejected"
+                        ? "/admin/deposits/rejected"
+                        : "/admin/deposits/all";
+                  });
+                });
+              </script>
+            </header>
+
+            <section class="card" aria-labelledby="table-title">
+              <h2
+                id="table-title"
+                style="
+                  margin: 0 0 10px;
+                  font-size: 1.02rem;
+                  font-weight: 800;
+                  color: var(--brand-800);
+                "
+              >
+                Approved Deposits
+              </h2>
+
+              <div class="table-wrap">
+                <table class="table" aria-describedby="table-title">
+                  <thead>
+                    <tr>
+                      <th scope="col">ID</th>
+                      <th scope="col">User</th>
+                      <th scope="col">Coin</th>
+                      <th scope="col" class="t-right">Amount</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">TXID</th>
+                      <th scope="col">Address</th>
+                      <th scope="col">Created</th>
+                      <th scope="col">Approved</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (!items || items.length === 0) { %>
+                    <tr>
+                      <td
+                        colspan="9"
+                        class="muted"
+                        style="text-align: center; padding: 16px"
+                      >
+                        No approved deposits.
+                      </td>
+                    </tr>
+                    <% } %> <% (items || []).forEach(function(row){ %>
+                    <tr>
+                      <td>#<%= row.id %></td>
+                      <td><%= row.user_email || row.user_id %></td>
+                      <td><%= row.coin %></td>
+                      <td class="t-right">
+                        <%= Number(row.amount || 0).toLocaleString() %>
+                      </td>
+                      <td>
+                        <span class="badge badge-success"
+                          ><%= row.status %></span
+                        >
+                      </td>
+                      <td class="mono"><%= row.txid || "-" %></td>
+                      <td class="mono"><%= row.address_used || "-" %></td>
+                      <td><%= new Date(row.created_at).toLocaleString() %></td>
+                      <td>
+                        <%= row.approved_at ? new
+                        Date(row.approved_at).toLocaleString() : "-" %>
+                      </td>
+                    </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+
+              <% if (typeof pageInfo !== 'undefined' && pageInfo) { %> <%-
+              include('../partials/pagination', { pageInfo: pageInfo }) %> <% }
+              %>
+            </section>
+          </main>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

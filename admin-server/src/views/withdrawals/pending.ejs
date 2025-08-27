@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title><%= title || "Approved Withdrawals" %> — Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/static/admin.css" rel="stylesheet" />
+    <style>
+      /* === Theme Variables: White / Black / Brownish Orange === */
+      :root {
+        --bg: #ffffff;
+        --ink: #0b0b0b;
+        --muted: #6b6b6b;
+        --soft: #f7f7f7;
+        --border: #e8e8e8;
+        --brand-500: #d67a19;
+        --brand-600: #b26014;
+        --brand-900: #4b2808;
+        --success: #159947;
+        --danger: #c62828;
+        --warn: #a06d00;
+        --radius: 14px;
+        --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      }
+
+      html,
+      body {
+        height: 100%;
+        overflow-x: auto;
+        overflow-y: auto;
+      }
+      body,
+      .app {
+        margin: 0;
+        background: var(--soft);
+        color: var(--ink);
+        font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+      }
+
+      .cp-desktop-wrap {
+        width: 100%;
+        height: 100%;
+        overflow-x: auto;
+        overflow-y: auto;
+        background: var(--soft);
+      }
+      .cp-desktop {
+        display: block;
+        width: max-content;
+        min-width: 100%;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 12px 0;
+      }
+      .cp-scale {
+        transform-origin: top center;
+        transform: scale(0.92);
+      }
+      @media (max-width: 1200px) {
+        .cp-scale {
+          transform: scale(0.88);
+        }
+      }
+      @media (max-width: 900px) {
+        .cp-scale {
+          transform: scale(0.84);
+        }
+      }
+      @media (max-width: 700px) {
+        .cp-scale {
+          transform: scale(0.8);
+        }
+      }
+
+      /* Container / card */
+      .container {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px 20px;
+        margin: 0 auto;
+        box-shadow: var(--shadow);
+        max-width: 1280px;
+        width: 1280px;
+      }
+      .card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px 16px;
+        margin-top: 20px;
+        box-shadow: var(--shadow);
+      }
+
+      /* Header + search */
+      .page-head h1 {
+        color: var(--brand-900);
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin: 0 0 16px;
+      }
+      .search {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .search input,
+      .search select {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        min-height: 38px;
+      }
+      .search button {
+        background: var(--brand-500);
+        border: 1px solid var(--brand-600);
+        border-radius: 10px;
+        padding: 10px 16px;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .search button:hover {
+        filter: brightness(0.95);
+      }
+
+      /* Table */
+      .table-wrap {
+        overflow-x: auto;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+      }
+      .table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 1400px; /* ensures horizontal scroll if small screen */
+        background: transparent;
+        font-size: 0.95rem;
+      }
+      .table thead th {
+        background: var(--soft);
+        color: var(--brand-900);
+        font-weight: 700;
+        border-bottom: 1px solid var(--border);
+        padding: 10px;
+        text-align: left;
+        white-space: nowrap;
+      }
+      .table td {
+        border-top: 1px solid var(--border);
+        padding: 10px;
+        vertical-align: middle;
+        white-space: nowrap;
+      }
+      .table tbody tr:hover {
+        background: #fff8f0;
+      }
+      .t-right {
+        text-align: right;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .mono {
+        font-family: "Fira Mono", monospace;
+        font-size: 0.9rem;
+      }
+
+      /* Badges */
+      .badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .badge-success {
+        background: #e9f7ef;
+        color: var(--success);
+        border: 1px solid #cfeedd;
+      }
+      .badge-danger {
+        background: #fdeaea;
+        color: var(--danger);
+        border: 1px solid #f5caca;
+      }
+
+      @media (max-width: 700px) {
+        .container {
+          padding: 16px 10px;
+        }
+        .card {
+          padding: 14px 10px;
+        }
+        .page-head h1 {
+          font-size: 1.3rem;
+        }
+        .table {
+          font-size: 0.9rem;
+          min-width: 1200px;
+        }
+      }
+    </style>
+  </head>
+  <body class="app">
+    <div class="cp-desktop-wrap">
+      <div class="cp-desktop">
+        <div class="cp-scale">
+          <main class="container">
+            <header class="page-head">
+              <h1><%= title || "Approved Withdrawals" %></h1>
+              <form method="get" class="search">
+                <input
+                  name="q"
+                  placeholder="Search email / txid / address / coin"
+                  value="<%= query || '' %>"
+                />
+                <select name="status" id="withdrawal-status-select">
+                  <option value="all">All</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+                <button>Go</button>
+              </form>
+              <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                  var select = document.getElementById(
+                    "withdrawal-status-select"
+                  );
+                  select.value = "approved";
+                  select.addEventListener("change", function () {
+                    window.location.href =
+                      select.value === "pending"
+                        ? "/admin/withdrawals/pending"
+                        : select.value === "approved"
+                        ? "/admin/withdrawals/approved"
+                        : select.value === "rejected"
+                        ? "/admin/withdrawals/rejected"
+                        : "/admin/withdrawals/all";
+                  });
+                });
+              </script>
+            </header>
+
+            <section class="card">
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>User</th>
+                      <th>Coin</th>
+                      <th class="t-right">Amount</th>
+                      <th class="t-right">Fee</th>
+                      <th>Status</th>
+                      <th>TXID</th>
+                      <th>To Address</th>
+                      <th>Created</th>
+                      <th>Processed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (!items || items.length === 0) { %>
+                    <tr>
+                      <td colspan="10" class="muted">
+                        No approved withdrawals.
+                      </td>
+                    </tr>
+                    <% } %> <% (items || []).forEach(function(row){ %>
+                    <tr>
+                      <td>#<%= row.id %></td>
+                      <td><%= row.user_email || row.user_id %></td>
+                      <td><%= row.coin %></td>
+                      <td class="t-right">
+                        <%= Number(row.amount || 0).toLocaleString() %>
+                      </td>
+                      <td class="t-right">
+                        <%= Number(row.fee || 0).toLocaleString() %>
+                      </td>
+                      <td>
+                        <span class="badge badge-success"
+                          ><%= row.status %></span
+                        >
+                      </td>
+                      <td class="mono"><%= row.txid || "—" %></td>
+                      <td class="mono"><%= row.to_address %></td>
+                      <td><%= new Date(row.created_at).toLocaleString() %></td>
+                      <td>
+                        <%= row.processed_at ? new
+                        Date(row.processed_at).toLocaleString() : "—" %>
+                      </td>
+                    </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+              <% if (typeof pageInfo !== 'undefined' && pageInfo) { %> <%-
+              include('../partials/pagination', { pageInfo: pageInfo }) %> <% }
+              %>
+            </section>
+          </main>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

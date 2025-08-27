@@ -1,0 +1,31 @@
+<div class="overflow-x-auto rounded-2xl ring-1 ring-white/5 bg-neutral-900/40">
+  <table class="min-w-full text-sm">
+    <thead class="bg-white/5 text-neutral-300">
+      <tr>
+        <% cols.forEach(c => { %>
+        <th class="text-left px-4 py-2 font-medium"><%= c.label %></th>
+        <% }) %>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (!rows || rows.length === 0) { %>
+      <tr>
+        <td
+          class="px-4 py-6 text-center text-neutral-400"
+          colspan="<%= cols.length %>"
+        >
+          No records.
+        </td>
+      </tr>
+      <% } else { %> <% rows.forEach(r => { %>
+      <tr class="border-t border-white/5">
+        <% cols.forEach(c => { %>
+        <td class="px-4 py-2">
+          <%- (c.render ? c.render(r) : (r[c.key] ?? '')) %>
+        </td>
+        <% }) %>
+      </tr>
+      <% }) %> <% } %>
+    </tbody>
+  </table>
+</div>

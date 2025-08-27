@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title><%= title || "Investment Plans" %> — Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- (Optional) Bootstrap CDN. You can remove if not needed; styles below override. -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    />
+
+    <style>
+      /* ================= White / Black / Brown-Orange Theme ================= */
+      :root {
+        --bg: #ffffff;
+        --ink: #0b0b0b;
+        --muted: #6b6b6b;
+        --soft: #f7f7f7;
+        --border: #e8e8e8;
+        --brand-50: #fff4e8;
+        --brand-200: #ffd4a6;
+        --brand-400: #e9953e;
+        --brand-500: #d67a19;
+        --brand-600: #b26014;
+        --brand-900: #4b2808;
+        --success: #159947;
+        --danger: #c62828;
+        --neutral: #555;
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--soft);
+        color: var(--ink);
+        font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+      }
+      html,
+      body {
+        overflow: auto;
+      } /* always allow page scroll */
+
+      /* Centered + scalable wrapper (consistent with your other pages) */
+      .cp-desktop-wrap {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background: var(--soft);
+      }
+      .cp-desktop {
+        display: block;
+        width: max-content;
+        min-width: 100%;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 12px 0;
+      }
+      .cp-scale {
+        transform-origin: top left;
+        transform: scale(0.94);
+      }
+      @media (max-width: 1200px) {
+        .cp-scale {
+          transform: scale(0.9);
+        }
+      }
+      @media (max-width: 992px) {
+        .cp-scale {
+          transform: scale(0.88);
+        }
+      }
+      @media (max-width: 768px) {
+        .cp-scale {
+          transform: scale(0.86);
+        }
+      }
+      @media (max-width: 600px) {
+        .cp-scale {
+          transform: scale(0.84);
+        }
+      }
+
+      /* Container & cards */
+      .container-box {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px 20px;
+        margin: 0 auto;
+        box-shadow: var(--shadow);
+        max-width: 1150px;
+        width: 1150px;
+      }
+      .title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin: 0 0 16px;
+        color: var(--brand-900);
+      }
+
+      .card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        margin-bottom: 18px;
+      }
+      .card-body {
+        padding: 16px 14px;
+      }
+
+      /* Form */
+      .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: -8px;
+        margin-right: -8px;
+      }
+      .form-group {
+        padding-left: 8px;
+        padding-right: 8px;
+        margin-bottom: 12px;
+      }
+      .form-group label {
+        font-weight: 700;
+        color: var(--brand-900);
+        margin-bottom: 6px;
+      }
+      .form-control {
+        width: 100%;
+        background: var(--bg);
+        color: var(--ink);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        outline: none;
+        transition: border-color 0.12s, box-shadow 0.12s;
+      }
+      .form-control:focus {
+        border-color: var(--brand-500);
+        box-shadow: 0 0 0 3px rgba(214, 122, 25, 0.18);
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-block;
+        border: 1px solid var(--brand-600);
+        background: var(--brand-500);
+        color: #fff;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        border-radius: 12px;
+        padding: 10px 16px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: filter 0.15s ease;
+      }
+      .btn:hover {
+        filter: brightness(0.96);
+      }
+      .btn:active {
+        filter: brightness(0.92);
+      }
+      .btn-info {
+        background: #1f6fb2;
+        border-color: #1f6fb2;
+      }
+      .btn-danger {
+        background: var(--danger);
+        border-color: #b32323;
+      }
+      .btn-sm {
+        padding: 7px 12px;
+        border-radius: 10px;
+        font-weight: 700;
+      }
+
+      /* Table (reliable horizontal scroll) */
+      .table-wrap {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      table.table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+        background: transparent;
+        font-size: 0.96rem;
+        min-width: 1200px; /* force horizontal scroll on narrow screens */
+      }
+      thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        text-align: left;
+        font-weight: 800;
+        padding: 12px 10px;
+        background: var(--soft) !important;
+        color: var(--brand-900);
+        border-bottom: 1px solid var(--border) !important;
+        white-space: nowrap;
+      }
+      tbody td {
+        padding: 11px 10px;
+        border-top: 1px solid var(--border) !important;
+        white-space: nowrap;
+        vertical-align: middle;
+      }
+      tbody tr:hover {
+        background: #fff8f0;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        background: #ececec;
+        color: #333;
+        border: 1px solid #ddd;
+      }
+      .badge-success {
+        background: #e9f7ef;
+        color: var(--success);
+        border-color: #cfeedd;
+      }
+      .badge-secondary {
+        background: #f0f0f0;
+        color: #333;
+        border-color: #e2e2e2;
+      }
+
+      .text-muted {
+        color: var(--muted) !important;
+      }
+
+      /* Column sizing helpers (approximate your original grid) */
+      .col-md-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+      }
+      .col-md-2 {
+        flex: 0 0 16.6666%;
+        max-width: 16.6666%;
+      }
+      .col-md-1 {
+        flex: 0 0 8.3333%;
+        max-width: 8.3333%;
+      }
+      .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+      .w-100 {
+        width: 100%;
+      }
+
+      @media (max-width: 900px) {
+        .container-box {
+          width: 92vw;
+          max-width: 92vw;
+          padding: 16px 14px;
+        }
+        .title {
+          font-size: 1.35rem;
+        }
+        .col-md-3,
+        .col-md-2,
+        .col-md-1,
+        .col-md-6 {
+          flex: 0 0 100%;
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cp-desktop-wrap">
+      <div class="cp-desktop">
+        <div class="cp-scale">
+          <main class="container-box">
+            <h2 class="title">Investment Plans</h2>
+
+            <!-- Create Plan -->
+            <form class="card" method="POST" action="/admin/plans">
+              <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <% } %>
+
+              <div class="card-body">
+                <div class="form-row">
+                  <div class="form-group col-md-3">
+                    <label>Plan Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      class="form-control"
+                      placeholder="Plan Name"
+                      required
+                    />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label>% Return</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      name="percent"
+                      class="form-control"
+                      placeholder="% Return"
+                      required
+                    />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label>Min Amount</label>
+                    <input
+                      type="number"
+                      name="min_amount"
+                      class="form-control"
+                      placeholder="Min Amount"
+                      required
+                    />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label>Max Amount</label>
+                    <input
+                      type="number"
+                      name="max_amount"
+                      class="form-control"
+                      placeholder="Max Amount"
+                      required
+                    />
+                  </div>
+                  <div class="form-group col-md-1">
+                    <label>Days</label>
+                    <input
+                      type="number"
+                      name="duration_days"
+                      class="form-control"
+                      placeholder="Days"
+                      required
+                    />
+                  </div>
+                  <div class="form-group col-md-1">
+                    <label>Hours</label>
+                    <input
+                      type="number"
+                      name="duration_hours"
+                      class="form-control"
+                      placeholder="Hours"
+                      required
+                    />
+                  </div>
+                  <div class="form-group col-md-1">
+                    <label>Badge</label>
+                    <input
+                      type="text"
+                      name="badge"
+                      class="form-control"
+                      placeholder="Badge"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group col-md-2">
+                    <label>Key</label>
+                    <input
+                      type="text"
+                      name="key"
+                      class="form-control"
+                      placeholder="Key"
+                    />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label>Sort Order</label>
+                    <input
+                      type="number"
+                      name="sort_order"
+                      class="form-control"
+                      placeholder="Sort Order"
+                    />
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label>Status</label>
+                    <select name="is_active" class="form-control">
+                      <option value="true">Active</option>
+                      <option value="false">Inactive</option>
+                    </select>
+                  </div>
+                  <div class="form-group col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn w-100">Create Plan</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            <!-- Plans Table -->
+            <div class="card">
+              <div class="card-body">
+                <% /* Accept either `rows` or `plans` from the controller */ %>
+                <% var data = Array.isArray(rows) ? rows : (Array.isArray(plans)
+                ? plans : []); %> <% if (data.length === 0) { %>
+                <p class="mb-0 text-muted">No plans yet.</p>
+                <% } else { %>
+                <div class="table-wrap">
+                  <table class="table table-hover mb-0">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>% Return</th>
+                        <th>Min Amount</th>
+                        <th>Max Amount</th>
+                        <th>Days</th>
+                        <th>Hours</th>
+                        <th>Badge</th>
+                        <th>Active</th>
+                        <th style="width: 180px">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% data.forEach(function (r) { %>
+                      <tr>
+                        <td><%= r.name %></td>
+                        <td><%= r.percent %></td>
+                        <td><%= r.min_amount %></td>
+                        <td><%= r.max_amount %></td>
+                        <td><%= r.duration_days %></td>
+                        <td><%= r.duration_hours %></td>
+                        <td><%= r.badge || '' %></td>
+                        <td>
+                          <% if (r.is_active) { %>
+                          <span class="badge badge-success">Yes</span>
+                          <% } else { %>
+                          <span class="badge badge-secondary">No</span>
+                          <% } %>
+                        </td>
+                        <td>
+                          <form
+                            method="POST"
+                            action="/admin/plans/delete"
+                            style="display: inline"
+                          >
+                            <% if (typeof csrfToken !== 'undefined' &&
+                            csrfToken) { %>
+                            <input
+                              type="hidden"
+                              name="_csrf"
+                              value="<%= csrfToken %>"
+                            />
+                            <% } %>
+                            <input
+                              type="hidden"
+                              name="id"
+                              value="<%= r.id || r._id %>"
+                            />
+                            <button
+                              type="submit"
+                              class="btn btn-sm btn-danger"
+                              onclick="return confirm('Delete this plan?')"
+                            >
+                              Delete
+                            </button>
+                          </form>
+                          <a
+                            href="/admin/plans/edit/<%= r.id || r._id %>"
+                            class="btn btn-sm btn-info"
+                            >Edit</a
+                          >
+                        </td>
+                      </tr>
+                      <% }); %>
+                    </tbody>
+                  </table>
+                </div>
+                <% } %>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <!-- Optional Bootstrap JS (safe to remove if unused) -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
