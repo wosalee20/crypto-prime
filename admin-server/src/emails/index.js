@@ -16,7 +16,7 @@ const BRAND = {
 };
 
 // ❌ Removed HEADER_URL
-const DASHBOARD_URL = "https://cyptoprime.online/login"; // 👈 update to your dashboard URL
+const DASHBOARD_URL = "https://cyptoprime.online"; // 👈 update to your dashboard URL
 const ADMIN_URL = "https://cyptoprime.online/admin"; // 👈 update to your admin URL
 
 /* --------------------------------------------------------------------------
