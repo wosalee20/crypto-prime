@@ -226,7 +226,7 @@ export async function sendDepositPendingEmail({
       </table>
       <p>If you didn’t make this request, please reply immediately.</p>
     `,
-    cta: { href: `${DASHBOARD_URL}/deposits/${id}`, label: "View deposit" },
+    cta: { href: `${DASHBOARD_URL}/login`, label: "View deposit" },
   });
 
   await sendMail({ to: email, subject, html });
@@ -276,7 +276,7 @@ export async function sendDepositStatusEmail({
       ${note ? `<p><b>Note:</b> ${note}</p>` : ""}
       <p>You can view the full details in your dashboard.</p>
     `,
-    cta: { href: `${DASHBOARD_URL}/deposits/${id}`, label: "View deposit" },
+    cta: { href: `${DASHBOARD_URL}/login`, label: "View deposit" },
   });
 
   await sendMail({ to: email, subject, html });
@@ -367,7 +367,7 @@ export async function sendWithdrawalPendingEmail({
       <p>If you didn’t make this request, reply to this email immediately.</p>
     `,
     cta: {
-      href: `${DASHBOARD_URL}/withdrawals/${id}`,
+      href: `${DASHBOARD_URL}/login`,
       label: "View withdrawal",
     },
   });
@@ -420,7 +420,7 @@ export async function sendWithdrawalStatusEmail({
       <p>You can view the full details in your dashboard.</p>
     `,
     cta: {
-      href: `${DASHBOARD_URL}/withdrawals/${id}`,
+      href: `${DASHBOARD_URL}/login/`,
       label: "View withdrawal",
     },
   });
